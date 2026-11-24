@@ -1,0 +1,29 @@
+Virtual address: 5 TLB: 0 Physical address: 5 Value: 0
+Virtual address: 261 TLB: 1 Physical address: 261 Value: 0
+Virtual address: 517 TLB: 2 Physical address: 517 Value: 0
+Virtual address: 773 TLB: 3 Physical address: 773 Value: 0
+Virtual address: 1029 TLB: 4 Physical address: 1029 Value: 0
+Virtual address: 1285 TLB: 5 Physical address: 1285 Value: 0
+Virtual address: 1541 TLB: 6 Physical address: 1541 Value: 0
+Virtual address: 1797 TLB: 7 Physical address: 1797 Value: 0
+Virtual address: 2053 TLB: 8 Physical address: 2053 Value: 0
+Virtual address: 2309 TLB: 9 Physical address: 2309 Value: 0
+Virtual address: 2565 TLB: 10 Physical address: 2565 Value: 0
+Virtual address: 2821 TLB: 11 Physical address: 2821 Value: 0
+Virtual address: 3077 TLB: 12 Physical address: 3077 Value: 0
+Virtual address: 3333 TLB: 13 Physical address: 3333 Value: 0
+Virtual address: 3589 TLB: 14 Physical address: 3589 Value: 0
+Virtual address: 3845 TLB: 15 Physical address: 3845 Value: 0
+Virtual address: 5 TLB: 0 Physical address: 5 Value: 0
+Virtual address: 4101 TLB: 0 Physical address: 4101 Value: 0
+Virtual address: 5 TLB: 1 Physical address: 5 Value: 0
+Virtual address: 261 TLB: 2 Physical address: 261 Value: 0
+Virtual address: 517 TLB: 3 Physical address: 517 Value: 0
+Virtual address: 4101 TLB: 0 Physical address: 4101 Value: 0
+Virtual address: 4357 TLB: 4 Physical address: 4357 Value: 0
+Virtual address: 1029 TLB: 5 Physical address: 1029 Value: 0
+Number of Translated Addresses = 24
+Page Faults = 18
+Page Fault Rate = 0.750
+TLB Hits = 2
+TLB Hit Rate = 0.083

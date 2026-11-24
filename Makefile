@@ -53,6 +53,7 @@ test: vm vm_asan
 	bash tests/testa_saida.sh ./vm
 	bash tests/testa_saida.sh ./vm_asan
 	bash tests/testa_modos.sh
+	bash tests/testa_modelo.sh
 
 clean:
 	rm -f vm vm_asan *.o .config

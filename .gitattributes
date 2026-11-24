@@ -1,2 +1,3 @@
 tests/dados/* -text
 tests/esperado/* -text
+tests/casos/* -text
