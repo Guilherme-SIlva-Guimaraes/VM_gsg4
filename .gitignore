@@ -1,6 +1,7 @@
 /vm
 /vm_asan
 *.o
+/.config
 /correct.txt
 /correct.txt.tmp*
 __pycache__/

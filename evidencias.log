@@ -308,3 +308,730 @@ codigo de saida do make test: 0
 ?? vm.c
 
 Script done on 2026-11-24 18:48:13-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 19:09:36-03:00 [COMMAND="bash /tmp/roteiro3.sh" TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="120" LINES="30"]
+Tue Nov 24 19:09:36 -03 2026
+guilherme
+/mnt/c/Users/guilherme/OneDrive/Documentos/gsg4
+== sessao 3: execucao que falha, gravada antes de corrigir o testa_modos.sh ==
+rm -f vm vm_asan *.o .config
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o vm.o vm.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o entrada.o entrada.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o memoria.o memoria.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o tlb.o tlb.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o simulador.o simulador.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o saida.o saida.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -o vm vm.o entrada.o memoria.o tlb.o simulador.o saida.o
+cc -Wall -Wextra -std=c11 -pthread -DNUMERO_FRAMES=128u -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -o vm_asan vm.c entrada.c memoria.c tlb.c simulador.c saida.c
+bash tests/testa_entradas.sh ./vm
+binario: ./vm
+OK      args_zero
+OK      args_um
+OK      args_dois
+OK      args_quatro
+OK      args_cinco
+OK      args_mostra_uso
+OK      pagina_maiuscula
+OK      pagina_inicial_maiuscula
+OK      pagina_com_espaco
+OK      pagina_vazia
+OK      pagina_invalida
+OK      pagina_nao_ascii
+OK      pagina_invalida_mostra_uso
+OK      tlb_maiuscula
+OK      tlb_com_espaco
+OK      tlb_vazia
+OK      tlb_invalida
+OK      pagina_e_tlb_invalidas
+OK      argumentos_antes_do_arquivo
+OK      algoritmo_antes_do_arquivo
+OK      algoritmos_lru_fifo
+OK      algoritmos_fifo_lru
+OK      algoritmos_fifo_fifo
+OK      algoritmos_lru_lru
+OK      enderecos_ausente
+OK      enderecos_caminho_vazio
+OK      enderecos_diretorio
+OK      enderecos_sem_permissao
+OK      enderecos_oficial
+OK      enderecos_oficial_crlf
+OK      enderecos_oficial_sem_lf_final
+OK      enderecos_limite_65535
+OK      enderecos_zeros_a_esquerda
+OK      enderecos_espacos_no_fim
+OK      enderecos_sem_lf_final
+OK      enderecos_cr_no_fim_do_arquivo
+OK      enderecos_crlf_com_espaco
+OK      enderecos_uma_linha
+OK      enderecos_3000_linhas
+OK      enderecos_linha_longa_zeros
+OK      enderecos_linha_longa_espacos
+OK      enderecos_arquivo_vazio
+OK      enderecos_so_lf
+OK      enderecos_so_crlf
+OK      enderecos_branca_no_meio
+OK      enderecos_branca_no_fim
+OK      enderecos_so_espacos
+OK      enderecos_espaco_no_inicio
+OK      enderecos_tab_no_inicio
+OK      enderecos_tab_no_fim
+OK      enderecos_espaco_no_meio
+OK      enderecos_nulo_no_meio
+OK      enderecos_nulo_no_inicio
+OK      enderecos_nulo_na_ultima_linha
+OK      enderecos_letra_no_fim
+OK      enderecos_so_letras
+OK      enderecos_sinal_mais
+OK      enderecos_sinal_menos
+OK      enderecos_menos_zero
+OK      enderecos_hexadecimal
+OK      enderecos_ponto_decimal
+OK      enderecos_virgula
+OK      enderecos_cr_no_meio
+OK      enderecos_cr_duplo
+OK      enderecos_cr_no_inicio
+OK      enderecos_65536
+OK      enderecos_int_max
+OK      enderecos_int_max_mais_um
+OK      enderecos_int_min
+OK      enderecos_uint_max
+OK      enderecos_vinte_digitos
+OK      enderecos_quarenta_digitos
+OK      enderecos_linha_longa_digitos
+OK      enderecos_linha_longa_letras
+OK      enderecos_erro_na_linha_1000
+OK      backing_ausente
+OK      backing_diretorio
+OK      backing_vazio
+OK      backing_65535_bytes
+OK      backing_65537_bytes
+OK      backing_link_quebrado
+OK      backing_link_valido
+OK      backing_sem_permissao
+OK      enderecos_antes_do_backing
+OK      enderecos_invalidos_antes_do_backing
+Casos OK: 85, FALHOU: 0, PULADO: 0
+bash tests/testa_entradas.sh ./vm_asan
+binario: ./vm_asan
+OK      args_zero
+OK      args_um
+OK      args_dois
+OK      args_quatro
+OK      args_cinco
+OK      args_mostra_uso
+OK      pagina_maiuscula
+OK      pagina_inicial_maiuscula
+OK      pagina_com_espaco
+OK      pagina_vazia
+OK      pagina_invalida
+OK      pagina_nao_ascii
+OK      pagina_invalida_mostra_uso
+OK      tlb_maiuscula
+OK      tlb_com_espaco
+OK      tlb_vazia
+OK      tlb_invalida
+OK      pagina_e_tlb_invalidas
+OK      argumentos_antes_do_arquivo
+OK      algoritmo_antes_do_arquivo
+OK      algoritmos_lru_fifo
+OK      algoritmos_fifo_lru
+OK      algoritmos_fifo_fifo
+OK      algoritmos_lru_lru
+OK      enderecos_ausente
+OK      enderecos_caminho_vazio
+OK      enderecos_diretorio
+OK      enderecos_sem_permissao
+OK      enderecos_oficial
+OK      enderecos_oficial_crlf
+OK      enderecos_oficial_sem_lf_final
+OK      enderecos_limite_65535
+OK      enderecos_zeros_a_esquerda
+OK      enderecos_espacos_no_fim
+OK      enderecos_sem_lf_final
+OK      enderecos_cr_no_fim_do_arquivo
+OK      enderecos_crlf_com_espaco
+OK      enderecos_uma_linha
+OK      enderecos_3000_linhas
+OK      enderecos_linha_longa_zeros
+OK      enderecos_linha_longa_espacos
+OK      enderecos_arquivo_vazio
+OK      enderecos_so_lf
+OK      enderecos_so_crlf
+OK      enderecos_branca_no_meio
+OK      enderecos_branca_no_fim
+OK      enderecos_so_espacos
+OK      enderecos_espaco_no_inicio
+OK      enderecos_tab_no_inicio
+OK      enderecos_tab_no_fim
+OK      enderecos_espaco_no_meio
+OK      enderecos_nulo_no_meio
+OK      enderecos_nulo_no_inicio
+OK      enderecos_nulo_na_ultima_linha
+OK      enderecos_letra_no_fim
+OK      enderecos_so_letras
+OK      enderecos_sinal_mais
+OK      enderecos_sinal_menos
+OK      enderecos_menos_zero
+OK      enderecos_hexadecimal
+OK      enderecos_ponto_decimal
+OK      enderecos_virgula
+OK      enderecos_cr_no_meio
+OK      enderecos_cr_duplo
+OK      enderecos_cr_no_inicio
+OK      enderecos_65536
+OK      enderecos_int_max
+OK      enderecos_int_max_mais_um
+OK      enderecos_int_min
+OK      enderecos_uint_max
+OK      enderecos_vinte_digitos
+OK      enderecos_quarenta_digitos
+OK      enderecos_linha_longa_digitos
+OK      enderecos_linha_longa_letras
+OK      enderecos_erro_na_linha_1000
+OK      backing_ausente
+OK      backing_diretorio
+OK      backing_vazio
+OK      backing_65535_bytes
+OK      backing_65537_bytes
+OK      backing_link_quebrado
+OK      backing_link_valido
+OK      backing_sem_permissao
+OK      enderecos_antes_do_backing
+OK      enderecos_invalidos_antes_do_backing
+Casos OK: 85, FALHOU: 0, PULADO: 0
+bash tests/testa_saida.sh ./vm
+binario: ./vm
+OK      professor_lru_fifo_cmp_byte_a_byte
+OK      professor_segunda_execucao_no_mesmo_diretorio
+OK      professor_sobrescreve_correct_antigo
+OK      permissoes_do_correct_seguem_o_umask
+OK      saida_e_diretorio
+OK      diretorio_sem_permissao_de_escrita
+OK      sinal_term_remove_temporario_e_nao_cria_correct
+OK      sinal_int_remove_temporario_e_nao_cria_correct
+Casos OK: 8, FALHOU: 0, PULADO: 0
+bash tests/testa_saida.sh ./vm_asan
+binario: ./vm_asan
+OK      professor_lru_fifo_cmp_byte_a_byte
+OK      professor_segunda_execucao_no_mesmo_diretorio
+OK      professor_sobrescreve_correct_antigo
+OK      permissoes_do_correct_seguem_o_umask
+OK      saida_e_diretorio
+OK      diretorio_sem_permissao_de_escrita
+OK      sinal_term_remove_temporario_e_nao_cria_correct
+OK      sinal_int_remove_temporario_e_nao_cria_correct
+Casos OK: 8, FALHOU: 0, PULADO: 0
+bash tests/testa_modos.sh
+OK      compila_frames128_notlb0_nothread0
+OK      frames128_notlb0_nothread0_fifo_fifo
+OK      frames128_notlb0_nothread0_fifo_fifo_fifo_lru
+OK      frames128_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo
+OK      frames128_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames128_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames128_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames128_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames128_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames128_notlb0_nothread1
+OK      frames128_notlb0_nothread1_fifo_fifo
+OK      frames128_notlb0_nothread1_fifo_fifo_fifo_lru
+OK      frames128_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo
+OK      frames128_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames128_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames128_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames128_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames128_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames128_notlb1_nothread0
+OK      frames128_notlb1_nothread0_fifo_fifo
+OK      frames128_notlb1_nothread0_fifo_fifo_fifo_lru
+OK      frames128_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo
+OK      frames128_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames128_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames128_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames128_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames128_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames128_notlb1_nothread1
+OK      frames128_notlb1_nothread1_fifo_fifo
+OK      frames128_notlb1_nothread1_fifo_fifo_fifo_lru
+OK      frames128_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo
+OK      frames128_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames128_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames128_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames128_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames128_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames256_notlb0_nothread0
+OK      frames256_notlb0_nothread0_fifo_fifo
+OK      frames256_notlb0_nothread0_fifo_fifo_fifo_lru
+OK      frames256_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo
+OK      frames256_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames256_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames256_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames256_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames256_notlb0_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames256_notlb0_nothread1
+OK      frames256_notlb0_nothread1_fifo_fifo
+OK      frames256_notlb0_nothread1_fifo_fifo_fifo_lru
+OK      frames256_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo
+OK      frames256_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames256_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames256_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames256_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames256_notlb0_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames256_notlb1_nothread0
+OK      frames256_notlb1_nothread0_fifo_fifo
+OK      frames256_notlb1_nothread0_fifo_fifo_fifo_lru
+OK      frames256_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo
+OK      frames256_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames256_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames256_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames256_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames256_notlb1_nothread0_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      compila_frames256_notlb1_nothread1
+OK      frames256_notlb1_nothread1_fifo_fifo
+OK      frames256_notlb1_nothread1_fifo_fifo_fifo_lru
+OK      frames256_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo
+OK      frames256_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru
+OK      frames256_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo
+FALHOU  frames256_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_igual_ao_normal_lru_fifo (saidas diferem)
+OK      frames256_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru
+FALHOU  frames256_notlb1_nothread1_fifo_fifo_fifo_lru_lru_fifo_lru_lru_asan_lru_fifo_asan_fifo_lru_asan_igual_ao_normal_fifo_lru (saidas diferem)
+OK      com_thread_igual_a_sem_thread_frames128_fifo_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_fifo_fifo
+FALHOU  com_thread_igual_a_sem_thread_frames128_fifo_lru (saidas diferem)
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb0_nothread0_fifo_lru.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb1_nothread0_fifo_lru.txt' for reading: No such file or directory
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_fifo_lru
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb0_nothread0_fifo_lru.txt' for reading: No such file or directory
+FALHOU  enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames128_fifo (colunas diferem)
+FALHOU  sem_tlb_ignora_o_argumento_da_tlb_frames128_fifo (saidas diferem)
+FALHOU  com_thread_igual_a_sem_thread_frames128_lru_fifo (saidas diferem)
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb0_nothread0_lru_fifo.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb1_nothread0_lru_fifo.txt' for reading: No such file or directory
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_lru_fifo
+FALHOU  com_thread_igual_a_sem_thread_frames128_lru_lru (saidas diferem)
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb0_nothread0_lru_lru.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb1_nothread0_lru_lru.txt' for reading: No such file or directory
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_lru_lru
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb0_nothread0_lru_fifo.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames128_notlb0_nothread0_lru_lru.txt' for reading: No such file or directory
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames128_lru
+FALHOU  sem_tlb_ignora_o_argumento_da_tlb_frames128_lru (saidas diferem)
+OK      com_thread_igual_a_sem_thread_frames256_fifo_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_fifo_fifo
+FALHOU  com_thread_igual_a_sem_thread_frames256_fifo_lru (saidas diferem)
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb0_nothread0_fifo_lru.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb1_nothread0_fifo_lru.txt' for reading: No such file or directory
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_fifo_lru
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb0_nothread0_fifo_lru.txt' for reading: No such file or directory
+FALHOU  enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames256_fifo (colunas diferem)
+FALHOU  sem_tlb_ignora_o_argumento_da_tlb_frames256_fifo (saidas diferem)
+FALHOU  com_thread_igual_a_sem_thread_frames256_lru_fifo (saidas diferem)
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb0_nothread0_lru_fifo.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb1_nothread0_lru_fifo.txt' for reading: No such file or directory
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_lru_fifo
+FALHOU  com_thread_igual_a_sem_thread_frames256_lru_lru (saidas diferem)
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb0_nothread0_lru_lru.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb1_nothread0_lru_lru.txt' for reading: No such file or directory
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_lru_lru
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb0_nothread0_lru_fifo.txt' for reading: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/frames256_notlb0_nothread0_lru_lru.txt' for reading: No such file or directory
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames256_lru
+FALHOU  sem_tlb_ignora_o_argumento_da_tlb_frames256_lru (saidas diferem)
+FALHOU  professor_cmp_byte_a_byte_frames128_notlb0_nothread0_lru_fifo (saida difere do correct.txt do professor)
+FALHOU  professor_cmp_byte_a_byte_frames128_notlb0_nothread0_asan_lru_fifo (saida difere do correct.txt do professor)
+FALHOU  professor_cmp_byte_a_byte_frames128_notlb0_nothread1_lru_fifo (saida difere do correct.txt do professor)
+FALHOU  professor_cmp_byte_a_byte_frames128_notlb0_nothread1_asan_lru_fifo (saida difere do correct.txt do professor)
+tests/testa_modos.sh: line 210: /tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb1_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb1_nothread1/vm.txt: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb1_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb1_nothread1/vm.txt' for reading: No such file or directory
+tests/testa_modos.sh: line 212: [: : integer expression expected
+FALHOU  100000_enderecos_frames128_notlb1_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb1_nothread1/vm (codigo 0,  linhas (esperado 100003), maior frame )
+tests/testa_modos.sh: line 210: /tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb1_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb1_nothread1/vm_asan.txt: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb1_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb1_nothread1/vm_asan.txt' for reading: No such file or directory
+tests/testa_modos.sh: line 212: [: : integer expression expected
+FALHOU  100000_enderecos_frames128_notlb1_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb1_nothread1/vm_asan (codigo 0,  linhas (esperado 100003), maior frame )
+tests/testa_modos.sh: line 210: /tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb0_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb0_nothread1/vm.txt: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb0_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb0_nothread1/vm.txt' for reading: No such file or directory
+tests/testa_modos.sh: line 212: [: : integer expression expected
+FALHOU  100000_enderecos_frames128_notlb0_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb0_nothread1/vm (codigo 0,  linhas (esperado 100005), maior frame )
+tests/testa_modos.sh: line 210: /tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb0_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb0_nothread1/vm_asan.txt: No such file or directory
+awk: fatal: cannot open file `/tmp/vmmodos.5mp90n/saidas/grande_frames128_notlb0_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb0_nothread1/vm_asan.txt' for reading: No such file or directory
+tests/testa_modos.sh: line 212: [: : integer expression expected
+FALHOU  100000_enderecos_frames128_notlb0_nothread1_/tmp/vmmodos.5mp90n/frames128_notlb0_nothread1/vm_asan (codigo 0,  linhas (esperado 100005), maior frame )
+OK      make_rejeita_FRAMES=64
+OK      make_rejeita_FRAMES=
+OK      make_rejeita_FRAMES=abc
+OK      make_rejeita_NOTLB=0
+OK      make_rejeita_NOTLB=2
+OK      make_rejeita_NOTHREAD=0
+OK      make_rejeita_NOTHREAD=x
+OK      make_recompila_ao_trocar_FRAMES
+OK      make_recompila_ao_ligar_NOTLB
+OK      make_recompila_ao_desligar_NOTLB
+Casos OK: 78, FALHOU: 36
+make: *** [Makefile:55: test] Error 1
+codigo de saida do make test: 2
+
+Script done on 2026-11-24 19:11:06-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 19:22:59-03:00 [COMMAND="bash /tmp/roteiro4.sh" TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="120" LINES="30"]
+Tue Nov 24 19:22:59 -03 2026
+guilherme
+/mnt/c/Users/guilherme/OneDrive/Documentos/gsg4
+== sessao 4: apos corrigir o testa_modos.sh (variaveis locais) ==
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+GNU Make 4.3
+424aade Adiciona esqueleto, Makefile e validacao das entradas
+rm -f vm vm_asan *.o .config
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o vm.o vm.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o entrada.o entrada.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o memoria.o memoria.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o tlb.o tlb.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o simulador.o simulador.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o saida.o saida.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -o vm vm.o entrada.o memoria.o tlb.o simulador.o saida.o
+cc -Wall -Wextra -std=c11 -pthread -DNUMERO_FRAMES=128u -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -o vm_asan vm.c entrada.c memoria.c tlb.c simulador.c saida.c
+bash tests/testa_entradas.sh ./vm
+binario: ./vm
+OK      args_zero
+OK      args_um
+OK      args_dois
+OK      args_quatro
+OK      args_cinco
+OK      args_mostra_uso
+OK      pagina_maiuscula
+OK      pagina_inicial_maiuscula
+OK      pagina_com_espaco
+OK      pagina_vazia
+OK      pagina_invalida
+OK      pagina_nao_ascii
+OK      pagina_invalida_mostra_uso
+OK      tlb_maiuscula
+OK      tlb_com_espaco
+OK      tlb_vazia
+OK      tlb_invalida
+OK      pagina_e_tlb_invalidas
+OK      argumentos_antes_do_arquivo
+OK      algoritmo_antes_do_arquivo
+OK      algoritmos_lru_fifo
+OK      algoritmos_fifo_lru
+OK      algoritmos_fifo_fifo
+OK      algoritmos_lru_lru
+OK      enderecos_ausente
+OK      enderecos_caminho_vazio
+OK      enderecos_diretorio
+OK      enderecos_sem_permissao
+OK      enderecos_oficial
+OK      enderecos_oficial_crlf
+OK      enderecos_oficial_sem_lf_final
+OK      enderecos_limite_65535
+OK      enderecos_zeros_a_esquerda
+OK      enderecos_espacos_no_fim
+OK      enderecos_sem_lf_final
+OK      enderecos_cr_no_fim_do_arquivo
+OK      enderecos_crlf_com_espaco
+OK      enderecos_uma_linha
+OK      enderecos_3000_linhas
+OK      enderecos_linha_longa_zeros
+OK      enderecos_linha_longa_espacos
+OK      enderecos_arquivo_vazio
+OK      enderecos_so_lf
+OK      enderecos_so_crlf
+OK      enderecos_branca_no_meio
+OK      enderecos_branca_no_fim
+OK      enderecos_so_espacos
+OK      enderecos_espaco_no_inicio
+OK      enderecos_tab_no_inicio
+OK      enderecos_tab_no_fim
+OK      enderecos_espaco_no_meio
+OK      enderecos_nulo_no_meio
+OK      enderecos_nulo_no_inicio
+OK      enderecos_nulo_na_ultima_linha
+OK      enderecos_letra_no_fim
+OK      enderecos_so_letras
+OK      enderecos_sinal_mais
+OK      enderecos_sinal_menos
+OK      enderecos_menos_zero
+OK      enderecos_hexadecimal
+OK      enderecos_ponto_decimal
+OK      enderecos_virgula
+OK      enderecos_cr_no_meio
+OK      enderecos_cr_duplo
+OK      enderecos_cr_no_inicio
+OK      enderecos_65536
+OK      enderecos_int_max
+OK      enderecos_int_max_mais_um
+OK      enderecos_int_min
+OK      enderecos_uint_max
+OK      enderecos_vinte_digitos
+OK      enderecos_quarenta_digitos
+OK      enderecos_linha_longa_digitos
+OK      enderecos_linha_longa_letras
+OK      enderecos_erro_na_linha_1000
+OK      backing_ausente
+OK      backing_diretorio
+OK      backing_vazio
+OK      backing_65535_bytes
+OK      backing_65537_bytes
+OK      backing_link_quebrado
+OK      backing_link_valido
+OK      backing_sem_permissao
+OK      enderecos_antes_do_backing
+OK      enderecos_invalidos_antes_do_backing
+Casos OK: 85, FALHOU: 0, PULADO: 0
+bash tests/testa_entradas.sh ./vm_asan
+binario: ./vm_asan
+OK      args_zero
+OK      args_um
+OK      args_dois
+OK      args_quatro
+OK      args_cinco
+OK      args_mostra_uso
+OK      pagina_maiuscula
+OK      pagina_inicial_maiuscula
+OK      pagina_com_espaco
+OK      pagina_vazia
+OK      pagina_invalida
+OK      pagina_nao_ascii
+OK      pagina_invalida_mostra_uso
+OK      tlb_maiuscula
+OK      tlb_com_espaco
+OK      tlb_vazia
+OK      tlb_invalida
+OK      pagina_e_tlb_invalidas
+OK      argumentos_antes_do_arquivo
+OK      algoritmo_antes_do_arquivo
+OK      algoritmos_lru_fifo
+OK      algoritmos_fifo_lru
+OK      algoritmos_fifo_fifo
+OK      algoritmos_lru_lru
+OK      enderecos_ausente
+OK      enderecos_caminho_vazio
+OK      enderecos_diretorio
+OK      enderecos_sem_permissao
+OK      enderecos_oficial
+OK      enderecos_oficial_crlf
+OK      enderecos_oficial_sem_lf_final
+OK      enderecos_limite_65535
+OK      enderecos_zeros_a_esquerda
+OK      enderecos_espacos_no_fim
+OK      enderecos_sem_lf_final
+OK      enderecos_cr_no_fim_do_arquivo
+OK      enderecos_crlf_com_espaco
+OK      enderecos_uma_linha
+OK      enderecos_3000_linhas
+OK      enderecos_linha_longa_zeros
+OK      enderecos_linha_longa_espacos
+OK      enderecos_arquivo_vazio
+OK      enderecos_so_lf
+OK      enderecos_so_crlf
+OK      enderecos_branca_no_meio
+OK      enderecos_branca_no_fim
+OK      enderecos_so_espacos
+OK      enderecos_espaco_no_inicio
+OK      enderecos_tab_no_inicio
+OK      enderecos_tab_no_fim
+OK      enderecos_espaco_no_meio
+OK      enderecos_nulo_no_meio
+OK      enderecos_nulo_no_inicio
+OK      enderecos_nulo_na_ultima_linha
+OK      enderecos_letra_no_fim
+OK      enderecos_so_letras
+OK      enderecos_sinal_mais
+OK      enderecos_sinal_menos
+OK      enderecos_menos_zero
+OK      enderecos_hexadecimal
+OK      enderecos_ponto_decimal
+OK      enderecos_virgula
+OK      enderecos_cr_no_meio
+OK      enderecos_cr_duplo
+OK      enderecos_cr_no_inicio
+OK      enderecos_65536
+OK      enderecos_int_max
+OK      enderecos_int_max_mais_um
+OK      enderecos_int_min
+OK      enderecos_uint_max
+OK      enderecos_vinte_digitos
+OK      enderecos_quarenta_digitos
+OK      enderecos_linha_longa_digitos
+OK      enderecos_linha_longa_letras
+OK      enderecos_erro_na_linha_1000
+OK      backing_ausente
+OK      backing_diretorio
+OK      backing_vazio
+OK      backing_65535_bytes
+OK      backing_65537_bytes
+OK      backing_link_quebrado
+OK      backing_link_valido
+OK      backing_sem_permissao
+OK      enderecos_antes_do_backing
+OK      enderecos_invalidos_antes_do_backing
+Casos OK: 85, FALHOU: 0, PULADO: 0
+bash tests/testa_saida.sh ./vm
+binario: ./vm
+OK      professor_lru_fifo_cmp_byte_a_byte
+OK      professor_segunda_execucao_no_mesmo_diretorio
+OK      professor_sobrescreve_correct_antigo
+OK      permissoes_do_correct_seguem_o_umask
+OK      saida_e_diretorio
+OK      diretorio_sem_permissao_de_escrita
+OK      sinal_term_remove_temporario_e_nao_cria_correct
+OK      sinal_int_remove_temporario_e_nao_cria_correct
+tests/testa_saida.sh: line 129: 315690 Hangup                  ( cd "$W" && exec "$VM" grande.txt lru fifo ) > "$TMP/saida" 2> "$TMP/erro"
+OK      sinal_hup_remove_temporario_e_nao_cria_correct
+Casos OK: 9, FALHOU: 0, PULADO: 0
+bash tests/testa_saida.sh ./vm_asan
+binario: ./vm_asan
+OK      professor_lru_fifo_cmp_byte_a_byte
+OK      professor_segunda_execucao_no_mesmo_diretorio
+OK      professor_sobrescreve_correct_antigo
+OK      permissoes_do_correct_seguem_o_umask
+OK      saida_e_diretorio
+OK      diretorio_sem_permissao_de_escrita
+OK      sinal_term_remove_temporario_e_nao_cria_correct
+OK      sinal_int_remove_temporario_e_nao_cria_correct
+tests/testa_saida.sh: line 129: 424053 Hangup                  ( cd "$W" && exec "$VM" grande.txt lru fifo ) > "$TMP/saida" 2> "$TMP/erro"
+OK      sinal_hup_remove_temporario_e_nao_cria_correct
+Casos OK: 9, FALHOU: 0, PULADO: 0
+bash tests/testa_modos.sh
+OK      compila_frames128_notlb0_nothread0
+OK      frames128_notlb0_nothread0_fifo_fifo
+OK      frames128_notlb0_nothread0_fifo_lru
+OK      frames128_notlb0_nothread0_lru_fifo
+OK      frames128_notlb0_nothread0_lru_lru
+OK      frames128_notlb0_nothread0_asan_lru_fifo
+OK      frames128_notlb0_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb0_nothread0_asan_fifo_lru
+OK      frames128_notlb0_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames128_notlb0_nothread1
+OK      frames128_notlb0_nothread1_fifo_fifo
+OK      frames128_notlb0_nothread1_fifo_lru
+OK      frames128_notlb0_nothread1_lru_fifo
+OK      frames128_notlb0_nothread1_lru_lru
+OK      frames128_notlb0_nothread1_asan_lru_fifo
+OK      frames128_notlb0_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb0_nothread1_asan_fifo_lru
+OK      frames128_notlb0_nothread1_asan_igual_ao_normal_fifo_lru
+OK      compila_frames128_notlb1_nothread0
+OK      frames128_notlb1_nothread0_fifo_fifo
+OK      frames128_notlb1_nothread0_fifo_lru
+OK      frames128_notlb1_nothread0_lru_fifo
+OK      frames128_notlb1_nothread0_lru_lru
+OK      frames128_notlb1_nothread0_asan_lru_fifo
+OK      frames128_notlb1_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb1_nothread0_asan_fifo_lru
+OK      frames128_notlb1_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames128_notlb1_nothread1
+OK      frames128_notlb1_nothread1_fifo_fifo
+OK      frames128_notlb1_nothread1_fifo_lru
+OK      frames128_notlb1_nothread1_lru_fifo
+OK      frames128_notlb1_nothread1_lru_lru
+OK      frames128_notlb1_nothread1_asan_lru_fifo
+OK      frames128_notlb1_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb1_nothread1_asan_fifo_lru
+OK      frames128_notlb1_nothread1_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb0_nothread0
+OK      frames256_notlb0_nothread0_fifo_fifo
+OK      frames256_notlb0_nothread0_fifo_lru
+OK      frames256_notlb0_nothread0_lru_fifo
+OK      frames256_notlb0_nothread0_lru_lru
+OK      frames256_notlb0_nothread0_asan_lru_fifo
+OK      frames256_notlb0_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb0_nothread0_asan_fifo_lru
+OK      frames256_notlb0_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb0_nothread1
+OK      frames256_notlb0_nothread1_fifo_fifo
+OK      frames256_notlb0_nothread1_fifo_lru
+OK      frames256_notlb0_nothread1_lru_fifo
+OK      frames256_notlb0_nothread1_lru_lru
+OK      frames256_notlb0_nothread1_asan_lru_fifo
+OK      frames256_notlb0_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb0_nothread1_asan_fifo_lru
+OK      frames256_notlb0_nothread1_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb1_nothread0
+OK      frames256_notlb1_nothread0_fifo_fifo
+OK      frames256_notlb1_nothread0_fifo_lru
+OK      frames256_notlb1_nothread0_lru_fifo
+OK      frames256_notlb1_nothread0_lru_lru
+OK      frames256_notlb1_nothread0_asan_lru_fifo
+OK      frames256_notlb1_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb1_nothread0_asan_fifo_lru
+OK      frames256_notlb1_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb1_nothread1
+OK      frames256_notlb1_nothread1_fifo_fifo
+OK      frames256_notlb1_nothread1_fifo_lru
+OK      frames256_notlb1_nothread1_lru_fifo
+OK      frames256_notlb1_nothread1_lru_lru
+OK      frames256_notlb1_nothread1_asan_lru_fifo
+OK      frames256_notlb1_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb1_nothread1_asan_fifo_lru
+OK      frames256_notlb1_nothread1_asan_igual_ao_normal_fifo_lru
+OK      com_thread_igual_a_sem_thread_frames128_fifo_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_fifo_fifo
+OK      com_thread_igual_a_sem_thread_frames128_fifo_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_fifo_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames128_fifo
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames128_fifo
+OK      com_thread_igual_a_sem_thread_frames128_lru_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_lru_fifo
+OK      com_thread_igual_a_sem_thread_frames128_lru_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_lru_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames128_lru
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames128_lru
+OK      com_thread_igual_a_sem_thread_frames256_fifo_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_fifo_fifo
+OK      com_thread_igual_a_sem_thread_frames256_fifo_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_fifo_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames256_fifo
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames256_fifo
+OK      com_thread_igual_a_sem_thread_frames256_lru_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_lru_fifo
+OK      com_thread_igual_a_sem_thread_frames256_lru_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_lru_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames256_lru
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames256_lru
+OK      professor_cmp_byte_a_byte_frames128_notlb0_nothread0_lru_fifo
+OK      professor_cmp_byte_a_byte_frames128_notlb0_nothread0_asan_lru_fifo
+OK      professor_cmp_byte_a_byte_frames128_notlb0_nothread1_lru_fifo
+OK      professor_cmp_byte_a_byte_frames128_notlb0_nothread1_asan_lru_fifo
+OK      100000_enderecos_frames128_notlb1_nothread1_vm
+OK      100000_enderecos_frames128_notlb1_nothread1_vm_asan
+OK      100000_enderecos_frames128_notlb0_nothread1_vm
+OK      100000_enderecos_frames128_notlb0_nothread1_vm_asan
+OK      make_rejeita_FRAMES=64
+OK      make_rejeita_FRAMES=
+OK      make_rejeita_FRAMES=abc
+OK      make_rejeita_NOTLB=0
+OK      make_rejeita_NOTLB=2
+OK      make_rejeita_NOTHREAD=0
+OK      make_rejeita_NOTHREAD=x
+OK      make_recompila_ao_trocar_FRAMES
+OK      make_recompila_ao_ligar_NOTLB
+OK      make_recompila_ao_desligar_NOTLB
+Casos OK: 114, FALHOU: 0
+codigo de saida do make test: 0
+== prova direta: cmp com o correct.txt do professor ==
+codigo de saida do vm: 0
+cmp: IGUAL ao correct.txt do professor
+Number of Translated Addresses = 1000
+Page Faults = 539
+Page Fault Rate = 0.539
+TLB Hits = 54
+TLB Hit Rate = 0.054
+ M .gitignore
+ M Makefile
+ M README.md
+ M entrada.h
+ M evidencias.log
+ M tests/testa_entradas.sh
+ M vm.c
+?? config.h
+?? memoria.c
+?? memoria.h
+?? saida.c
+?? saida.h
+?? simulador.c
+?? simulador.h
+?? tests/esperado/
+?? tests/testa_modos.sh
+?? tests/testa_saida.sh
+?? tlb.c
+?? tlb.h
+
+Script done on 2026-11-24 19:24:53-03:00 [COMMAND_EXIT_CODE="0"]

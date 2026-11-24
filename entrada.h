@@ -4,10 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define TAMANHO_PAGINA 256u
-#define NUMERO_PAGINAS 256u
-#define TAMANHO_BACKING ((size_t)TAMANHO_PAGINA * NUMERO_PAGINAS)
-#define ENDERECO_MAXIMO 65535u
+#include "config.h"
 
 typedef struct {
     uint16_t *enderecos;

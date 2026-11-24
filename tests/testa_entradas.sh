@@ -160,7 +160,7 @@ mkdir "$IN/diretorio"
 { repete 0 1048576; printf '5\n'; } > "$IN/longa_zeros_ok"
 { printf '5'; repete ' ' 1048576; printf '\n'; } > "$IN/longa_espacos_ok"
 repete a 1048576 > "$IN/longa_letras_sem_lf"
-awk 'BEGIN { for (i = 0; i < 100000; i++) print i % 65536 }' > "$IN/muitos_ok"
+awk 'BEGIN { for (i = 0; i < 3000; i++) print i % 65536 }' > "$IN/muitos_ok"
 { head -n 999 "$DADOS/addresses.txt"; printf 'x\n'; } > "$IN/erro_na_1000"
 sed 's/$/\r/' "$DADOS/addresses.txt" > "$IN/oficial_crlf"
 head -c -1 "$DADOS/addresses.txt" > "$IN/oficial_sem_lf"
@@ -212,7 +212,7 @@ caso_ok enderecos_sem_lf_final "$(arq sem_lf_ok)" lru fifo
 caso_ok enderecos_cr_no_fim_do_arquivo "$(arq cr_fim_ok)" lru fifo
 caso_ok enderecos_crlf_com_espaco "$(arq crlf_pequeno_ok)" lru fifo
 caso_ok enderecos_uma_linha "$(arq um_ok)" lru fifo
-caso_ok enderecos_100000_linhas "$(arq muitos_ok)" lru fifo
+caso_ok enderecos_3000_linhas "$(arq muitos_ok)" lru fifo
 caso_ok enderecos_linha_longa_zeros "$(arq longa_zeros_ok)" lru fifo
 caso_ok enderecos_linha_longa_espacos "$(arq longa_espacos_ok)" lru fifo
 

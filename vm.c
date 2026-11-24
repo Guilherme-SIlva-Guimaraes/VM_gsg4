@@ -3,13 +3,21 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
 #include "entrada.h"
+#include "saida.h"
+#include "simulador.h"
 
 #define USO "uso: ./vm arquivo_enderecos fifo|lru fifo|lru"
 
 static int algoritmo_valido(const char *texto)
 {
     return strcmp(texto, "fifo") == 0 || strcmp(texto, "lru") == 0;
+}
+
+static Algoritmo converter_algoritmo(const char *texto)
+{
+    return strcmp(texto, "lru") == 0 ? ALG_LRU : ALG_FIFO;
 }
 
 static void copiar_seguro(const char *texto, char *destino, size_t tamanho)
@@ -39,6 +47,8 @@ int main(int argc, char **argv)
     char erro[512];
     signed char backing[TAMANHO_BACKING];
     ListaEnderecos lista = {NULL, 0};
+    Saida saida;
+    int status;
 
     if (argc != 4) {
         fprintf(stderr, "erro: numero de argumentos invalido (esperado 3, recebido %d)\n", argc > 0 ? argc - 1 : 0);
@@ -60,6 +70,21 @@ int main(int argc, char **argv)
         fprintf(stderr, "erro: %s\n", erro);
         return 1;
     }
+    if (saida_abrir(&saida, erro, sizeof erro) < 0) {
+        liberar_enderecos(&lista);
+        fprintf(stderr, "erro: %s\n", erro);
+        return 1;
+    }
+    status = simular(&lista, backing, converter_algoritmo(argv[2]), converter_algoritmo(argv[3]), saida.arquivo, erro, sizeof erro);
     liberar_enderecos(&lista);
+    if (status < 0) {
+        saida_cancelar(&saida);
+        fprintf(stderr, "erro: %s\n", erro);
+        return 1;
+    }
+    if (saida_confirmar(&saida, erro, sizeof erro) < 0) {
+        fprintf(stderr, "erro: %s\n", erro);
+        return 1;
+    }
     return 0;
 }
