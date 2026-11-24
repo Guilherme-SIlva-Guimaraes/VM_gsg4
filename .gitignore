@@ -1,0 +1,6 @@
+/vm
+/vm_asan
+*.o
+/correct.txt
+/correct.txt.tmp*
+__pycache__/
