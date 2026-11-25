@@ -22,9 +22,9 @@ endif
 
 CFLAGS = -Wall -Wextra -std=c11 -O2 -pthread $(DEFS)
 ASAN_FLAGS = -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer
-FONTES = vm.c entrada.c memoria.c tlb.c simulador.c saida.c
+FONTES = vm.c entrada.c memoria.c tlb.c simulador.c
 OBJETOS = $(FONTES:.c=.o)
-CABECALHOS = config.h entrada.h memoria.h tlb.h simulador.h saida.h
+CABECALHOS = config.h entrada.h memoria.h tlb.h simulador.h
 CONFIG = FRAMES=$(FRAMES) NOTLB=$(NOTLB) NOTHREAD=$(NOTHREAD)
 
 .PHONY: all asan test clean FORCE

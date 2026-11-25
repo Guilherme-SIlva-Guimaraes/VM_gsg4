@@ -28,7 +28,6 @@ novo_w() {
     rm -rf "$W"
     mkdir -p "$W"
     cp "$DADOS/BACKING_STORE.bin" "$W/BACKING_STORE.bin"
-    printf 'sentinela\n' > "$W/correct.txt"
     "${PREP:-true}"
 }
 
@@ -39,11 +38,14 @@ rodar() {
 
 so_ascii() { ! LC_ALL=C grep -q -v '^[ -~]*$' "$1"; }
 sem_sanitizer() { ! grep -q -i -e sanitizer -e 'runtime error' "$1"; }
+conta_enderecos() { tr -d '\r' < "$1" | awk 'NF { n++ } END { print n + 0 }'; }
+formato_ok() { ! grep -q -v -E '^Virtual address: [0-9]+ TLB: [0-9]+ Physical address: [0-9]+ Value: -?[0-9]+$' "$1"; }
 
 caso_ok() {
     nome=$1
     shift
     novo_w
+    ls -A "$W" > "$TMP/antes"
     rodar "$@"
     if [ "$COD" -ne 0 ]; then
         falhou "$nome" "codigo $COD, esperado 0: $(resumo_erro)"
@@ -53,8 +55,19 @@ caso_ok() {
         falhou "$nome" "stderr nao vazio: $(resumo_erro)"
         return
     fi
-    if [ -s "$TMP/saida" ]; then
-        falhou "$nome" "stdout nao vazio"
+    esperadas=$(conta_enderecos "$1")
+    linhas=$(wc -l < "$TMP/saida")
+    if [ "$linhas" -ne "$esperadas" ]; then
+        falhou "$nome" "$linhas linhas na saida, esperado $esperadas"
+        return
+    fi
+    if ! formato_ok "$TMP/saida"; then
+        falhou "$nome" "linha fora do formato Virtual address: ... Value: ..."
+        return
+    fi
+    ls -A "$W" > "$TMP/depois"
+    if ! cmp -s "$TMP/antes" "$TMP/depois"; then
+        falhou "$nome" "arquivos criados ou removidos no diretorio de trabalho"
         return
     fi
     passou "$nome"
@@ -94,10 +107,6 @@ caso_erro() {
     ls -A "$W" > "$TMP/depois"
     if ! cmp -s "$TMP/antes" "$TMP/depois"; then
         falhou "$nome" "arquivos criados ou removidos no diretorio de trabalho"
-        return
-    fi
-    if [ "$(cat "$W/correct.txt")" != "sentinela" ]; then
-        falhou "$nome" "correct.txt antigo foi alterado"
         return
     fi
     passou "$nome"

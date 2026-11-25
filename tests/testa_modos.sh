@@ -3,7 +3,7 @@ DADOS="$RAIZ/tests/dados"
 ESPERADO="$RAIZ/tests/esperado/correct.txt"
 TMP=$(mktemp -d /tmp/vmmodos.XXXXXX)
 SAIDAS="$TMP/saidas"
-FONTES="Makefile config.h entrada.c entrada.h memoria.c memoria.h saida.c saida.h simulador.c simulador.h tlb.c tlb.h vm.c"
+FONTES="Makefile config.h entrada.c entrada.h memoria.c memoria.h simulador.c simulador.h tlb.c tlb.h vm.c"
 OK=0
 FALHOU=0
 trap 'rm -rf "$TMP"' EXIT
@@ -12,10 +12,9 @@ mkdir -p "$SAIDAS"
 passou() { OK=$((OK + 1)); echo "OK      $1"; }
 falhou() { FALHOU=$((FALHOU + 1)); echo "FALHOU  $1 ($2)"; }
 
-awk '{ print $1 }' "$DADOS/addresses.txt" > "$TMP/enderecos.col"
-awk '/^Virtual address:/ { print $NF }' "$ESPERADO" > "$TMP/valores.col"
+head -n 1000 "$ESPERADO" > "$TMP/esperado1000.txt"
+awk '/^Virtual address:/ { print $NF }' "$TMP/esperado1000.txt" > "$TMP/valores.col"
 DISTINTAS=$(awk '{ p[int($1 / 256)] = 1 } END { n = 0; for (k in p) n++; print n }' "$DADOS/addresses.txt")
-FALTAS_PROFESSOR=$(awk '/^Page Faults/ { print $4 }' "$ESPERADO")
 awk 'BEGIN { for (i = 0; i < 100000; i++) print i % 65536 }' > "$TMP/grande.txt"
 
 coluna_pa() { awk '/^Virtual address:/ { print $(NF - 2) }' "$1"; }
@@ -39,11 +38,9 @@ roda() {
     mkdir -p "$w"
     cp "$DADOS/BACKING_STORE.bin" "$w/"
     cp "$entrada" "$w/addresses.txt"
-    ( cd "$w" && "$bin" addresses.txt "$pag" "$tlb" ) > "$TMP/saida" 2> "$TMP/erro"
+    ( cd "$w" && "$bin" addresses.txt "$pag" "$tlb" ) > "$destino" 2> "$TMP/erro"
     COD=$?
-    if [ -f "$w/correct.txt" ]; then
-        cp "$w/correct.txt" "$destino"
-    fi
+    ARQUIVOS=$(ls -A "$w" | sort | tr '\n' ' ')
 }
 
 confere() {
@@ -51,23 +48,25 @@ confere() {
     local arq=$2
     local frames=$3
     local com_tlb=$4
-    local esperadas linhas res
-    if [ "$com_tlb" = 1 ]; then
-        esperadas=1005
-    else
-        esperadas=1003
-    fi
+    local res
     if [ "$COD" -ne 0 ]; then
         falhou "$nome" "codigo $COD: $(head -c 160 "$TMP/erro" | tr '\n' ' ')"
         return
     fi
-    if [ -s "$TMP/erro" ] || [ -s "$TMP/saida" ]; then
-        falhou "$nome" "stdout ou stderr nao vazio"
+    if [ -s "$TMP/erro" ]; then
+        falhou "$nome" "stderr nao vazio"
         return
     fi
-    linhas=$(wc -l < "$arq")
-    if [ "$linhas" -ne "$esperadas" ]; then
-        falhou "$nome" "$linhas linhas, esperado $esperadas"
+    if [ "$ARQUIVOS" != "BACKING_STORE.bin addresses.txt " ]; then
+        falhou "$nome" "arquivos no diretorio: $ARQUIVOS"
+        return
+    fi
+    if [ "$(wc -l < "$arq")" -ne 1000 ]; then
+        falhou "$nome" "$(wc -l < "$arq") linhas, esperado 1000"
+        return
+    fi
+    if grep -q -v '^Virtual address:' "$arq"; then
+        falhou "$nome" "linha que nao e de endereco na saida"
         return
     fi
     if ! awk '/^Virtual address:/ { print $NF }' "$arq" | cmp -s - "$TMP/valores.col"; then
@@ -90,20 +89,16 @@ FNR == NR { ender[FNR] = $1; total = FNR; next }
         distintas++
         if (distintas <= frames && fr != distintas - 1) erro = erro " ordem_dos_frames" k
     }
+    if (frames == 256) {
+        if ((pagina in frame_de) && frame_de[pagina] != fr) erro = erro " frame_muda" k
+        if ((fr in pagina_de) && pagina_de[fr] != pagina) erro = erro " frame_repetido" k
+        frame_de[pagina] = fr
+        pagina_de[fr] = pagina
+    }
     if (com_tlb == 1 && ($5 < 0 || $5 > 15)) erro = erro " slot" k
-    next
 }
-/^Number of Translated Addresses = / { if ($NF != total) erro = erro " total"; next }
-/^Page Faults = / { faltas = $NF; next }
-/^Page Fault Rate = / { taxa_faltas = $NF; next }
-/^TLB Hits = / { acertos = $NF; next }
-/^TLB Hit Rate = / { taxa_acertos = $NF; next }
 END {
     if (k != total) erro = erro " linhas" k
-    if (faltas < distintas) erro = erro " faltas_menor_que_paginas_distintas"
-    if (taxa_faltas != sprintf("%.3f", faltas / total)) erro = erro " taxa_de_faltas"
-    if (com_tlb == 1 && taxa_acertos != sprintf("%.3f", acertos / total)) erro = erro " taxa_de_acertos"
-    if (frames == 256 && faltas != distintas) erro = erro " faltas_com_256_frames"
     if (erro == "") print "ok"; else print erro
 }' "$DADOS/addresses.txt" "$arq")
     if [ "$res" != ok ]; then
@@ -192,28 +187,23 @@ done
 
 for v in frames128_notlb0_nothread0 frames128_notlb0_nothread1; do
     for prefixo in "" asan_; do
-        if cmp -s "$SAIDAS/${v}_${prefixo}lru_fifo.txt" "$ESPERADO"; then
+        if cmp -s "$SAIDAS/${v}_${prefixo}lru_fifo.txt" "$TMP/esperado1000.txt"; then
             passou "professor_cmp_byte_a_byte_${v}_${prefixo}lru_fifo"
         else
-            falhou "professor_cmp_byte_a_byte_${v}_${prefixo}lru_fifo" "saida difere do correct.txt do professor"
+            falhou "professor_cmp_byte_a_byte_${v}_${prefixo}lru_fifo" "saida difere das 1000 linhas do professor"
         fi
     done
 done
 
 for v in frames128_notlb1_nothread1 frames128_notlb0_nothread1; do
-    if [ "$v" = frames128_notlb1_nothread1 ]; then
-        esperadas=100003
-    else
-        esperadas=100005
-    fi
     for bin in vm vm_asan; do
         roda "$TMP/$v/$bin" "$SAIDAS/grande_${v}_${bin}.txt" lru fifo "$TMP/grande.txt"
         linhas=$(wc -l < "$SAIDAS/grande_${v}_${bin}.txt")
-        maior=$(awk '/^Virtual address:/ { f = int($(NF - 2) / 256); if (f > m) m = f } END { print m }' "$SAIDAS/grande_${v}_${bin}.txt")
-        if [ "$COD" -eq 0 ] && [ "$linhas" -eq "$esperadas" ] && [ "$maior" -lt 128 ]; then
+        maior=$(awk '/^Virtual address:/ { f = int($(NF - 2) / 256); if (f > m) m = f } END { print m + 0 }' "$SAIDAS/grande_${v}_${bin}.txt")
+        if [ "$COD" -eq 0 ] && [ "$linhas" -eq 100000 ] && [ "$maior" -lt 128 ]; then
             passou "100000_enderecos_${v}_${bin}"
         else
-            falhou "100000_enderecos_${v}_${bin}" "codigo $COD, $linhas linhas (esperado $esperadas), maior frame $maior"
+            falhou "100000_enderecos_${v}_${bin}" "codigo $COD, $linhas linhas (esperado 100000), maior frame $maior"
         fi
     done
 done
@@ -232,34 +222,34 @@ done
 
 dir="$TMP/recompila"
 copia_fontes "$dir"
-faltas() {
+maior_frame() {
     roda "$dir/vm" "$TMP/recompila.txt" lru fifo
-    awk '/^Page Faults/ { print $4 }' "$TMP/recompila.txt"
+    awk '/^Virtual address:/ { f = int($(NF - 2) / 256); if (f > m) m = f } END { print m + 0 }' "$TMP/recompila.txt"
 }
 make -C "$dir" vm > "$dir/make.log" 2>&1
-a=$(faltas)
+a=$(maior_frame)
 make -C "$dir" FRAMES=256 vm > "$dir/make.log" 2>&1
-b=$(faltas)
+b=$(maior_frame)
 make -C "$dir" vm > "$dir/make.log" 2>&1
-c=$(faltas)
-if [ "$a" = "$FALTAS_PROFESSOR" ] && [ "$b" = "$DISTINTAS" ] && [ "$c" = "$FALTAS_PROFESSOR" ]; then
+c=$(maior_frame)
+if [ "$a" = 127 ] && [ "$b" = "$((DISTINTAS - 1))" ] && [ "$c" = 127 ]; then
     passou "make_recompila_ao_trocar_FRAMES"
 else
-    falhou "make_recompila_ao_trocar_FRAMES" "faltas $a, $b, $c; esperado $FALTAS_PROFESSOR, $DISTINTAS, $FALTAS_PROFESSOR"
+    falhou "make_recompila_ao_trocar_FRAMES" "maior frame $a, $b, $c; esperado 127, $((DISTINTAS - 1)), 127"
 fi
 make -C "$dir" NOTLB=1 vm > "$dir/make.log" 2>&1
 roda "$dir/vm" "$TMP/recompila.txt" lru fifo
-if grep -q '^TLB Hits' "$TMP/recompila.txt"; then
-    falhou "make_recompila_ao_ligar_NOTLB" "a saida ainda tem TLB Hits"
+if grep -q ' TLB: ' "$TMP/recompila.txt"; then
+    falhou "make_recompila_ao_ligar_NOTLB" "a saida ainda tem a coluna TLB"
 else
     passou "make_recompila_ao_ligar_NOTLB"
 fi
 make -C "$dir" vm > "$dir/make.log" 2>&1
 roda "$dir/vm" "$TMP/recompila.txt" lru fifo
-if grep -q '^TLB Hits' "$TMP/recompila.txt"; then
+if grep -q ' TLB: ' "$TMP/recompila.txt"; then
     passou "make_recompila_ao_desligar_NOTLB"
 else
-    falhou "make_recompila_ao_desligar_NOTLB" "a saida nao tem TLB Hits"
+    falhou "make_recompila_ao_desligar_NOTLB" "a saida nao tem a coluna TLB"
 fi
 
 echo "Casos OK: $OK, FALHOU: $FALHOU"

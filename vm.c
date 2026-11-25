@@ -1,11 +1,11 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "config.h"
 #include "entrada.h"
-#include "saida.h"
 #include "simulador.h"
 
 #define USO "uso: ./vm arquivo_enderecos fifo|lru fifo|lru"
@@ -47,7 +47,9 @@ int main(int argc, char **argv)
     char erro[512];
     signed char backing[TAMANHO_BACKING];
     ListaEnderecos lista = {NULL, 0};
-    Saida saida;
+    char *texto = NULL;
+    size_t tamanho = 0;
+    FILE *buffer;
     int status;
 
     if (argc != 4) {
@@ -70,21 +72,28 @@ int main(int argc, char **argv)
         fprintf(stderr, "erro: %s\n", erro);
         return 1;
     }
-    if (saida_abrir(&saida, erro, sizeof erro) < 0) {
+    buffer = open_memstream(&texto, &tamanho);
+    if (buffer == NULL) {
         liberar_enderecos(&lista);
-        fprintf(stderr, "erro: %s\n", erro);
+        fprintf(stderr, "erro: sem memoria para montar a saida\n");
         return 1;
     }
-    status = simular(&lista, backing, converter_algoritmo(argv[2]), converter_algoritmo(argv[3]), saida.arquivo, erro, sizeof erro);
+    status = simular(&lista, backing, converter_algoritmo(argv[2]), converter_algoritmo(argv[3]), buffer, erro, sizeof erro);
     liberar_enderecos(&lista);
+    if (fclose(buffer) != 0 && status == 0) {
+        snprintf(erro, sizeof erro, "falha ao montar a saida em memoria");
+        status = -1;
+    }
     if (status < 0) {
-        saida_cancelar(&saida);
+        free(texto);
         fprintf(stderr, "erro: %s\n", erro);
         return 1;
     }
-    if (saida_confirmar(&saida, erro, sizeof erro) < 0) {
-        fprintf(stderr, "erro: %s\n", erro);
+    if (fwrite(texto, 1, tamanho, stdout) != tamanho || fflush(stdout) != 0) {
+        free(texto);
+        fprintf(stderr, "erro: falha ao escrever a saida\n");
         return 1;
     }
+    free(texto);
     return 0;
 }

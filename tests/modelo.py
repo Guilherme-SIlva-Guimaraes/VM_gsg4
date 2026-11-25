@@ -22,12 +22,10 @@ def ler_backing(caminho):
 
 def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb):
     tlb = [None] * TAMANHO_TLB
+    ordem_tlb = OrderedDict()
     recencia_tlb = OrderedDict()
-    proximo_tlb = 0
     memoria = OrderedDict()
     proximo_frame = 0
-    faltas = 0
-    acertos = 0
     linhas = []
     for endereco in enderecos:
         pagina = endereco >> 8
@@ -41,7 +39,6 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
                     frame = entrada[1]
                     break
         if slot is not None:
-            acertos += 1
             recencia_tlb.move_to_end(slot)
             if algoritmo_pagina == "lru":
                 memoria.move_to_end(pagina)
@@ -51,7 +48,6 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
                 if algoritmo_pagina == "lru":
                     memoria.move_to_end(pagina)
             else:
-                faltas += 1
                 if proximo_frame < frames:
                     frame = proximo_frame
                     proximo_frame += 1
@@ -61,16 +57,20 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
                     for i, entrada in enumerate(tlb):
                         if entrada is not None and entrada[0] == vitima:
                             tlb[i] = None
+                            ordem_tlb.pop(i, None)
                             recencia_tlb.pop(i, None)
                 memoria[pagina] = frame
             if com_tlb:
-                if algoritmo_tlb == "fifo":
-                    slot = proximo_tlb
-                    proximo_tlb = (proximo_tlb + 1) % TAMANHO_TLB
+                livres = [i for i, entrada in enumerate(tlb) if entrada is None]
+                if livres:
+                    slot = livres[0]
+                elif algoritmo_tlb == "fifo":
+                    slot = next(iter(ordem_tlb))
                 else:
-                    livres = [i for i, entrada in enumerate(tlb) if entrada is None]
-                    slot = livres[0] if livres else next(iter(recencia_tlb))
+                    slot = next(iter(recencia_tlb))
                 tlb[slot] = (pagina, frame)
+                ordem_tlb.pop(slot, None)
+                ordem_tlb[slot] = True
                 recencia_tlb.pop(slot, None)
                 recencia_tlb[slot] = True
         valor = backing[endereco]
@@ -79,13 +79,6 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
             linhas.append("Virtual address: %d TLB: %d Physical address: %d Value: %d" % (endereco, slot, fisico, valor))
         else:
             linhas.append("Virtual address: %d Physical address: %d Value: %d" % (endereco, fisico, valor))
-    total = len(enderecos)
-    linhas.append("Number of Translated Addresses = %d" % total)
-    linhas.append("Page Faults = %d" % faltas)
-    linhas.append("Page Fault Rate = %.3f" % (faltas / total))
-    if com_tlb:
-        linhas.append("TLB Hits = %d" % acertos)
-        linhas.append("TLB Hit Rate = %.3f" % (acertos / total))
     return linhas
 
 

@@ -3,7 +3,7 @@ DADOS="$RAIZ/tests/dados"
 CASOS="$RAIZ/tests/casos"
 ESPERADO="$RAIZ/tests/esperado/correct.txt"
 TMP=$(mktemp -d /tmp/vmmodelo.XXXXXX)
-FONTES="Makefile config.h entrada.c entrada.h memoria.c memoria.h saida.c saida.h simulador.c simulador.h tlb.c tlb.h vm.c"
+FONTES="Makefile config.h entrada.c entrada.h memoria.c memoria.h simulador.c simulador.h tlb.c tlb.h vm.c"
 PEQUENAS="um_zero um_maximo repetido sequencial_129 aleatorio_50 todas_256_ida_e_volta"
 OK=0
 FALHOU=0
@@ -50,13 +50,9 @@ roda_c() {
     mkdir -p "$w"
     cp "$DADOS/BACKING_STORE.bin" "$w/"
     cp "$entrada" "$w/addresses.txt"
-    ( cd "$w" && "$bin" addresses.txt "$pag" "$tlb" ) > "$TMP/saida" 2> "$TMP/erro"
+    ( cd "$w" && "$bin" addresses.txt "$pag" "$tlb" ) > "$destino" 2> "$TMP/erro"
     COD=$?
-    if [ -f "$w/correct.txt" ]; then
-        cp "$w/correct.txt" "$destino"
-    else
-        rm -f "$destino"
-    fi
+    ARQUIVOS=$(ls -A "$w" | sort | tr '\n' ' ')
 }
 
 modelo() {
@@ -75,7 +71,7 @@ compara() {
     shift 5
     for b in "$@"; do
         roda_c "$TMP/bin/$b" "$entrada" "$pag" "$tlb" "$TMP/c.txt"
-        if [ "$COD" -ne 0 ] || [ -s "$TMP/erro" ] || [ -s "$TMP/saida" ] || ! cmp -s "$TMP/c.txt" "$esperado"; then
+        if [ "$COD" -ne 0 ] || [ -s "$TMP/erro" ] || [ "$ARQUIVOS" != "BACKING_STORE.bin addresses.txt " ] || ! cmp -s "$TMP/c.txt" "$esperado"; then
             ruins="$ruins $b(codigo $COD)"
             if [ -z "$primeira" ]; then
                 primeira=$(cmp "$TMP/c.txt" "$esperado" 2>&1 | head -n 1)
@@ -99,14 +95,15 @@ constroi sem_tlb_256 FRAMES=256 NOTLB=1
 
 python3 -I "$RAIZ/tests/gera_entradas.py" "$TMP/in"
 
+head -n 1000 "$ESPERADO" > "$TMP/professor1000.txt"
 modelo "$DADOS/addresses.txt" lru fifo 128 tlb "$TMP/m.txt"
-if cmp -s "$TMP/m.txt" "$ESPERADO"; then
-    passou modelo_python_igual_ao_correct_do_professor
+if cmp -s "$TMP/m.txt" "$TMP/professor1000.txt"; then
+    passou modelo_python_igual_as_1000_linhas_do_professor
 else
-    falhou modelo_python_igual_ao_correct_do_professor "$(cmp "$TMP/m.txt" "$ESPERADO" 2>&1 | head -n 1)"
+    falhou modelo_python_igual_as_1000_linhas_do_professor "$(cmp "$TMP/m.txt" "$TMP/professor1000.txt" 2>&1 | head -n 1)"
 fi
 
-for c in "tlb fifo tlb.fifo" "tlb lru tlb.lru" "pagina fifo pagina.fifo" "pagina lru pagina.lru"; do
+for c in "tlb fifo tlb.fifo" "tlb lru tlb.lru" "pagina fifo pagina.fifo" "pagina lru pagina.lru" "invalida fifo invalida.fifo" "invalida lru invalida.lru"; do
     set -- $c
     caso=$1
     alg=$2
@@ -114,6 +111,7 @@ for c in "tlb fifo tlb.fifo" "tlb lru tlb.lru" "pagina fifo pagina.fifo" "pagina
     case "$caso" in
         tlb) pag=fifo; tlb_alg=$alg ;;
         pagina) pag=$alg; tlb_alg=fifo ;;
+        invalida) pag=fifo; tlb_alg=$alg ;;
     esac
     modelo "$CASOS/$caso.txt" "$pag" "$tlb_alg" 128 tlb "$TMP/m.txt"
     if cmp -s "$TMP/m.txt" "$esperado"; then
@@ -130,6 +128,8 @@ compara a_mao_tlb_lru_pagina_fifo "$CASOS/tlb.txt" fifo lru "$CASOS/tlb.lru.espe
 compara a_mao_tlb_lru_pagina_lru "$CASOS/tlb.txt" lru lru "$CASOS/tlb.lru.esperado" $BINS
 compara a_mao_pagina_fifo_despeja_a_mais_antiga_e_invalida_a_tlb "$CASOS/pagina.txt" fifo fifo "$CASOS/pagina.fifo.esperado" $BINS
 compara a_mao_pagina_lru_despeja_a_menos_usada "$CASOS/pagina.txt" lru fifo "$CASOS/pagina.lru.esperado" $BINS
+compara a_mao_posicao_livre_da_tlb_fifo_depois_de_invalidar "$CASOS/invalida.txt" fifo fifo "$CASOS/invalida.fifo.esperado" $BINS
+compara a_mao_posicao_livre_da_tlb_lru_depois_de_invalidar "$CASOS/invalida.txt" fifo lru "$CASOS/invalida.lru.esperado" $BINS
 
 for frames in 128 256; do
     for entrada in "$TMP"/in/*.txt; do

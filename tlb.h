@@ -7,13 +7,13 @@ typedef struct {
     int valida;
     unsigned int pagina;
     unsigned int frame;
+    unsigned long long carregado_em;
     unsigned long long usado_em;
 } EntradaTlb;
 
 typedef struct {
     EntradaTlb entradas[TAMANHO_TLB];
     Algoritmo algoritmo;
-    unsigned int proximo;
     unsigned long long relogio;
 } Tlb;
 

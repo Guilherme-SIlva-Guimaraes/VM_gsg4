@@ -12,8 +12,6 @@ int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo a
 {
     Memoria memoria;
     Tlb tlb;
-    unsigned long long acertos = 0;
-    double total = (double)lista->quantidade;
     size_t i;
 
     memoria_iniciar(&memoria, algoritmo_pagina);
@@ -35,7 +33,6 @@ int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo a
             }
         }
         if (achou) {
-            acertos += 1;
             memoria_registrar_uso(&memoria, frame);
         } else {
             int despejou;
@@ -54,13 +51,6 @@ int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo a
         } else {
             fprintf(saida, "Virtual address: %u Physical address: %u Value: %d\n", endereco, frame * TAMANHO_PAGINA + deslocamento, (int)memoria_ler(&memoria, frame, deslocamento));
         }
-    }
-    fprintf(saida, "Number of Translated Addresses = %zu\n", lista->quantidade);
-    fprintf(saida, "Page Faults = %llu\n", memoria.faltas);
-    fprintf(saida, "Page Fault Rate = %.3f\n", (double)memoria.faltas / total);
-    if (COM_TLB) {
-        fprintf(saida, "TLB Hits = %llu\n", acertos);
-        fprintf(saida, "TLB Hit Rate = %.3f\n", (double)acertos / total);
     }
     if (ferror(saida)) {
         snprintf(erro, tamanho_erro, "falha ao escrever a saida");

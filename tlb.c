@@ -74,7 +74,12 @@ int tlb_buscar(Tlb *tlb, unsigned int pagina, unsigned int *slot, unsigned int *
     return 0;
 }
 
-static unsigned int escolher_lru(const Tlb *tlb)
+static unsigned long long chave(const Tlb *tlb, unsigned int i)
+{
+    return tlb->algoritmo == ALG_LRU ? tlb->entradas[i].usado_em : tlb->entradas[i].carregado_em;
+}
+
+static unsigned int escolher_posicao(const Tlb *tlb)
 {
     unsigned int melhor = 0;
     unsigned int i;
@@ -83,7 +88,9 @@ static unsigned int escolher_lru(const Tlb *tlb)
         if (!tlb->entradas[i].valida) {
             return i;
         }
-        if (tlb->entradas[i].usado_em < tlb->entradas[melhor].usado_em) {
+    }
+    for (i = 1; i < TAMANHO_TLB; i++) {
+        if (chave(tlb, i) < chave(tlb, melhor)) {
             melhor = i;
         }
     }
@@ -92,18 +99,13 @@ static unsigned int escolher_lru(const Tlb *tlb)
 
 unsigned int tlb_inserir(Tlb *tlb, unsigned int pagina, unsigned int frame)
 {
-    unsigned int slot;
+    unsigned int slot = escolher_posicao(tlb);
 
-    if (tlb->algoritmo == ALG_FIFO) {
-        slot = tlb->proximo;
-        tlb->proximo = (tlb->proximo + 1) % TAMANHO_TLB;
-    } else {
-        slot = escolher_lru(tlb);
-    }
     tlb->relogio += 1;
     tlb->entradas[slot].valida = 1;
     tlb->entradas[slot].pagina = pagina;
     tlb->entradas[slot].frame = frame;
+    tlb->entradas[slot].carregado_em = tlb->relogio;
     tlb->entradas[slot].usado_em = tlb->relogio;
     return slot;
 }
