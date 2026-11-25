@@ -56,6 +56,18 @@ roda_c() {
 
 modelo() {
     python3 -I "$RAIZ/tests/modelo.py" "$1" "$DADOS/BACKING_STORE.bin" "$2" "$3" "$4" "$5" > "$6"
+    python3 -I "$RAIZ/tests/modelo.py" "$1" "$DADOS/BACKING_STORE.bin" "$2" "$3" "$4" "$5" arquivo > "$6.arq"
+}
+
+confere_arquivo() {
+    local esperado=$1
+    local linhas
+    if [ -f "$esperado.arq" ]; then
+        cmp -s "$TMP/w/correct.txt" "$esperado.arq"
+    else
+        linhas=$(wc -l < "$esperado")
+        head -n "$linhas" "$TMP/w/correct.txt" | cmp -s - "$esperado" && [ "$(wc -l < "$TMP/w/correct.txt")" -eq "$((linhas + 5))" ]
+    fi
 }
 
 compara() {
@@ -70,10 +82,13 @@ compara() {
     shift 5
     for b in "$@"; do
         roda_c "$TMP/bin/$b" "$entrada" "$pag" "$tlb" "$TMP/c.txt"
-        if [ "$COD" -ne 0 ] || [ -s "$TMP/erro" ] || [ "$ARQUIVOS" != "BACKING_STORE.bin addresses.txt " ] || ! cmp -s "$TMP/c.txt" "$esperado"; then
+        if [ "$COD" -ne 0 ] || [ -s "$TMP/erro" ] || [ "$ARQUIVOS" != "BACKING_STORE.bin addresses.txt correct.txt " ] || ! cmp -s "$TMP/c.txt" "$esperado" || ! confere_arquivo "$esperado"; then
             ruins="$ruins $b(codigo $COD)"
             if [ -z "$primeira" ]; then
                 primeira=$(cmp "$TMP/c.txt" "$esperado" 2>&1 | head -n 1)
+                if [ -z "$primeira" ]; then
+                    primeira="saida igual; arquivos: $ARQUIVOS; stderr: $(head -c 80 "$TMP/erro" | tr '\n' ' ')"
+                fi
             fi
         fi
     done

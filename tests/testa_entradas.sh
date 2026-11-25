@@ -66,9 +66,18 @@ caso_ok() {
         falhou "$nome" "linha fora do formato Virtual address: ... Value: ..."
         return
     fi
-    ls -A "$W" > "$TMP/depois"
-    if ! cmp -s "$TMP/antes" "$TMP/depois"; then
-        falhou "$nome" "arquivos criados ou removidos no diretorio de trabalho"
+    if [ ! -f "$W/correct.txt" ] || [ "$(wc -l < "$W/correct.txt")" -ne "$((esperadas + 5))" ] || ! head -n "$esperadas" "$W/correct.txt" | cmp -s - "$TMP/saida"; then
+        falhou "$nome" "correct.txt ausente ou diferente da saida mais 5 linhas de estatistica"
+        return
+    fi
+    if [ "$(sed -n "$((esperadas + 1))p" "$W/correct.txt")" != "Number of Translated Addresses = $esperadas" ]; then
+        falhou "$nome" "correct.txt sem a linha Number of Translated Addresses = $esperadas depois dos enderecos"
+        return
+    fi
+    ls -A "$W" | LC_ALL=C sort > "$TMP/depois"
+    { cat "$TMP/antes"; echo correct.txt; } | LC_ALL=C sort > "$TMP/antes_mais_correct"
+    if ! cmp -s "$TMP/antes_mais_correct" "$TMP/depois"; then
+        falhou "$nome" "arquivos no diretorio de trabalho diferentes do esperado (os de antes mais correct.txt)"
         return
     fi
     passou "$nome"

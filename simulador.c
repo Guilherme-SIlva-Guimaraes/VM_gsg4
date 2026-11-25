@@ -8,10 +8,24 @@
 #include "memoria.h"
 #include "tlb.h"
 
-int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo algoritmo_pagina, Algoritmo algoritmo_tlb, FILE *saida, char *erro, size_t tamanho_erro)
+void escrever_estatisticas(FILE *arquivo, const Estatisticas *estatisticas)
+{
+    double total = (double)estatisticas->enderecos;
+
+    fprintf(arquivo, "Number of Translated Addresses = %zu\n", estatisticas->enderecos);
+    fprintf(arquivo, "Page Faults = %llu\n", estatisticas->faltas);
+    fprintf(arquivo, "Page Fault Rate = %.3f\n", (double)estatisticas->faltas / total);
+    if (COM_TLB) {
+        fprintf(arquivo, "TLB Hits = %llu\n", estatisticas->acertos_tlb);
+        fprintf(arquivo, "TLB Hit Rate = %.3f\n", (double)estatisticas->acertos_tlb / total);
+    }
+}
+
+int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo algoritmo_pagina, Algoritmo algoritmo_tlb, FILE *saida, Estatisticas *estatisticas, char *erro, size_t tamanho_erro)
 {
     Memoria memoria;
     Tlb tlb;
+    unsigned long long acertos = 0;
     size_t i;
 
     memoria_iniciar(&memoria, algoritmo_pagina);
@@ -33,6 +47,7 @@ int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo a
             }
         }
         if (achou) {
+            acertos += 1;
             memoria_registrar_uso(&memoria, frame);
         } else {
             int despejou;
@@ -56,5 +71,8 @@ int simular(const ListaEnderecos *lista, const signed char *backing, Algoritmo a
         snprintf(erro, tamanho_erro, "falha ao escrever a saida");
         return -1;
     }
+    estatisticas->enderecos = lista->quantidade;
+    estatisticas->faltas = memoria.faltas;
+    estatisticas->acertos_tlb = acertos;
     return 0;
 }

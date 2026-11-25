@@ -27,6 +27,8 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
     memoria = OrderedDict()
     proximo_frame = 0
     linhas = []
+    faltas = 0
+    acertos = 0
     for endereco in enderecos:
         pagina = endereco >> 8
         deslocamento = endereco & 255
@@ -39,6 +41,7 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
                     frame = entrada[1]
                     break
         if slot is not None:
+            acertos += 1
             recencia_tlb.move_to_end(slot)
             if algoritmo_pagina == "lru":
                 memoria.move_to_end(pagina)
@@ -48,6 +51,7 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
                 if algoritmo_pagina == "lru":
                     memoria.move_to_end(pagina)
             else:
+                faltas += 1
                 if proximo_frame < frames:
                     frame = proximo_frame
                     proximo_frame += 1
@@ -79,13 +83,22 @@ def simular(enderecos, backing, algoritmo_pagina, algoritmo_tlb, frames, com_tlb
             linhas.append("Virtual address: %d TLB: %d Physical address: %d Value: %d" % (endereco, slot, fisico, valor))
         else:
             linhas.append("Virtual address: %d Physical address: %d Value: %d" % (endereco, fisico, valor))
-    return linhas
+    return linhas, faltas, acertos
 
 
 def main():
     enderecos = ler_enderecos(sys.argv[1])
     backing = ler_backing(sys.argv[2])
-    linhas = simular(enderecos, backing, sys.argv[3], sys.argv[4], int(sys.argv[5]), sys.argv[6] == "tlb")
+    com_tlb = sys.argv[6] == "tlb"
+    linhas, faltas, acertos = simular(enderecos, backing, sys.argv[3], sys.argv[4], int(sys.argv[5]), com_tlb)
+    if len(sys.argv) > 7 and sys.argv[7] == "arquivo":
+        total = len(enderecos)
+        linhas.append("Number of Translated Addresses = %d" % total)
+        linhas.append("Page Faults = %d" % faltas)
+        linhas.append("Page Fault Rate = %.3f" % (faltas / total))
+        if com_tlb:
+            linhas.append("TLB Hits = %d" % acertos)
+            linhas.append("TLB Hit Rate = %.3f" % (acertos / total))
     sys.stdout.write("\n".join(linhas) + "\n")
 
 

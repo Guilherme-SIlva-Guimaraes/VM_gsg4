@@ -43,8 +43,10 @@ elif [ -s "$TMP/erro" ]; then
     falhou professor_lru_fifo_cmp_byte_a_byte "stderr nao vazio"
 elif ! cmp -s "$TMP/saida" "$TMP/esperado1000.txt"; then
     falhou professor_lru_fifo_cmp_byte_a_byte "saida difere das 1000 linhas do correct.txt: $(cmp "$TMP/saida" "$TMP/esperado1000.txt" 2>&1 | head -n 1)"
-elif [ "$(ls -A "$W" | sort | tr '\n' ' ')" != "BACKING_STORE.bin addresses.txt " ]; then
+elif [ "$(ls -A "$W" | sort | tr '\n' ' ')" != "BACKING_STORE.bin addresses.txt correct.txt " ]; then
     falhou professor_lru_fifo_cmp_byte_a_byte "arquivos no diretorio: $(ls -A "$W" | tr '\n' ' ')"
+elif ! cmp -s "$W/correct.txt" "$PROFESSOR/correct.txt"; then
+    falhou professor_lru_fifo_cmp_byte_a_byte "correct.txt gravado difere do correct.txt do professor: $(cmp "$W/correct.txt" "$PROFESSOR/correct.txt" 2>&1 | head -n 1)"
 else
     passou professor_lru_fifo_cmp_byte_a_byte
 fi

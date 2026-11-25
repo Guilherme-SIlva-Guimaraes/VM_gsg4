@@ -55,12 +55,25 @@ confere() {
         falhou "$nome" "stderr nao vazio"
         return
     fi
-    if [ "$ARQUIVOS" != "BACKING_STORE.bin addresses.txt " ]; then
+    if [ "$ARQUIVOS" != "BACKING_STORE.bin addresses.txt correct.txt " ]; then
         falhou "$nome" "arquivos no diretorio: $ARQUIVOS"
         return
     fi
     if [ "$(wc -l < "$arq")" -ne 1000 ]; then
         falhou "$nome" "$(wc -l < "$arq") linhas, esperado 1000"
+        return
+    fi
+    if [ "$com_tlb" -eq 1 ]; then
+        estatisticas=5
+    else
+        estatisticas=3
+    fi
+    if [ "$(wc -l < "$TMP/w/correct.txt")" -ne "$((1000 + estatisticas))" ] || ! head -n 1000 "$TMP/w/correct.txt" | cmp -s - "$arq"; then
+        falhou "$nome" "correct.txt nao e a saida mais $estatisticas linhas de estatistica"
+        return
+    fi
+    if ! tail -n "$estatisticas" "$TMP/w/correct.txt" | head -n 1 | grep -q '^Number of Translated Addresses = 1000$'; then
+        falhou "$nome" "correct.txt sem a linha Number of Translated Addresses = 1000 no lugar certo"
         return
     fi
     if grep -q -v '^Virtual address:' "$arq"; then

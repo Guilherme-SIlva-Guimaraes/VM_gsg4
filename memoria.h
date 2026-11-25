@@ -11,6 +11,7 @@ typedef struct {
     unsigned long long carregado_em[NUMERO_FRAMES];
     unsigned long long usado_em[NUMERO_FRAMES];
     unsigned long long relogio;
+    unsigned long long faltas;
     unsigned int ocupados;
     signed char fisica[NUMERO_FRAMES * TAMANHO_PAGINA];
 } Memoria;

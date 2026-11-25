@@ -36,6 +36,7 @@ unsigned int memoria_obter_frame(Memoria *memoria, unsigned int pagina, const si
         memoria->usado_em[frame] = memoria->relogio;
         return frame;
     }
+    memoria->faltas += 1;
     if (memoria->ocupados < NUMERO_FRAMES) {
         frame = memoria->ocupados;
         memoria->ocupados += 1;

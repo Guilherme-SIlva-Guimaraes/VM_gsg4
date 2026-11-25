@@ -19,6 +19,7 @@ pulado() { PULADO=$((PULADO + 1)); echo "PULADO  $1 ($2)"; }
 
 python3 -I "$RAIZ/tests/gera_dados.py" "$DADOS"
 python3 -I "$RAIZ/tests/modelo.py" "$DADOS/addresses.txt" "$DADOS/BACKING_STORE.bin" lru fifo 128 tlb > "$TMP/esperado.txt"
+python3 -I "$RAIZ/tests/modelo.py" "$DADOS/addresses.txt" "$DADOS/BACKING_STORE.bin" lru fifo 128 tlb arquivo > "$TMP/esperado_arquivo.txt"
 
 novo_w() {
     rm -rf "$W"
@@ -42,8 +43,10 @@ confere_sucesso() {
         falhou "$nome" "stderr nao vazio: $(resumo_erro)"
     elif ! cmp -s "$TMP/saida" "$TMP/esperado.txt"; then
         falhou "$nome" "saida difere do modelo: $(cmp "$TMP/saida" "$TMP/esperado.txt" 2>&1 | head -n 1)"
-    elif [ "$(lista_w)" != "BACKING_STORE.bin addresses.txt " ]; then
+    elif [ "$(lista_w)" != "BACKING_STORE.bin addresses.txt correct.txt " ]; then
         falhou "$nome" "arquivos no diretorio: $(lista_w)"
+    elif ! cmp -s "$W/correct.txt" "$TMP/esperado_arquivo.txt"; then
+        falhou "$nome" "correct.txt difere do modelo: $(cmp "$W/correct.txt" "$TMP/esperado_arquivo.txt" 2>&1 | head -n 1)"
     else
         passou "$nome"
     fi
@@ -70,20 +73,47 @@ else
     falhou saida_so_com_linhas_de_endereco_sem_estatisticas "linhas: $(wc -l < "$TMP/saida")"
 fi
 
-novo_w
-printf 'velho\n' > "$W/correct.txt"
-rodar addresses.txt lru fifo
-if [ "$COD" -ne 0 ] || [ "$(cat "$W/correct.txt")" != "velho" ] || [ "$(lista_w)" != "BACKING_STORE.bin addresses.txt correct.txt " ]; then
-    falhou nao_cria_nem_altera_correct_txt "codigo $COD, arquivos: $(lista_w)"
+if [ -f "$W/correct.txt" ] && [ "$(wc -l < "$W/correct.txt")" -eq 1005 ] && head -n 1000 "$W/correct.txt" | cmp -s - "$TMP/saida"; then
+    passou correct_txt_tem_as_linhas_da_saida_mais_5_de_estatistica
 else
-    passou nao_cria_nem_altera_correct_txt
+    falhou correct_txt_tem_as_linhas_da_saida_mais_5_de_estatistica "correct.txt ausente ou com linhas erradas"
 fi
 
 novo_w
-chmod 555 "$W"
+printf 'velho\n' > "$W/correct.txt"
 rodar addresses.txt lru fifo
-chmod 755 "$W"
-confere_sucesso funciona_em_diretorio_somente_leitura
+confere_sucesso substitui_correct_txt_antigo
+
+for ruim in "addresses.txt xyz fifo" "addresses.txt lru abc" "naoexiste.txt lru fifo" "addresses.txt lru"; do
+    novo_w
+    printf 'velho\n' > "$W/correct.txt"
+    rodar $ruim
+    if [ "$COD" -ne 1 ] || [ -s "$TMP/saida" ] || [ "$(cat "$W/correct.txt")" != "velho" ]; then
+        falhou "erro_nao_altera_correct_txt_$(echo "$ruim" | tr ' ' '_')" "codigo $COD, stdout $(wc -c < "$TMP/saida") bytes"
+    else
+        passou "erro_nao_altera_correct_txt_$(echo "$ruim" | tr ' ' '_')"
+    fi
+done
+
+if [ "$(id -u)" -eq 0 ]; then
+    pulado diretorio_somente_leitura_avisa_e_imprime "rodando como root, chmod nao impede a gravacao"
+else
+    novo_w
+    chmod 555 "$W"
+    rodar addresses.txt lru fifo
+    chmod 755 "$W"
+    if [ "$COD" -ne 0 ]; then
+        falhou diretorio_somente_leitura_avisa_e_imprime "codigo $COD, esperado 0: $(resumo_erro)"
+    elif ! cmp -s "$TMP/saida" "$TMP/esperado.txt"; then
+        falhou diretorio_somente_leitura_avisa_e_imprime "saida padrao difere do modelo"
+    elif [ -e "$W/correct.txt" ]; then
+        falhou diretorio_somente_leitura_avisa_e_imprime "correct.txt apareceu"
+    elif ! head -n 1 "$TMP/erro" | grep -q '^aviso: '; then
+        falhou diretorio_somente_leitura_avisa_e_imprime "sem aviso no stderr: $(resumo_erro)"
+    else
+        passou diretorio_somente_leitura_avisa_e_imprime
+    fi
+fi
 
 novo_w
 ( cd "$W" && "$VM" addresses.txt lru fifo | cat > "$TMP/saida_cat"; exit "${PIPESTATUS[0]}" ) 2> "$TMP/erro"
@@ -102,6 +132,8 @@ if [ -w /dev/full ]; then
         falhou saida_cheia_da_erro "codigo $COD, esperado 1: $(resumo_erro)"
     elif ! head -n 1 "$TMP/erro" | grep -q '^erro: falha ao escrever a saida'; then
         falhou saida_cheia_da_erro "mensagem inesperada: $(resumo_erro)"
+    elif [ -e "$W/correct.txt" ]; then
+        falhou saida_cheia_da_erro "correct.txt foi criado apesar da falha"
     else
         passou saida_cheia_da_erro
     fi
