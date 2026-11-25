@@ -2225,3 +2225,597 @@ Virtual address: 12107 TLB: 1 Physical address: 17739 Value: -46
 ?? tests/casos/invalida.txt
 
 Script done on 2026-11-24 21:29:10-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 21:43:58-03:00 [COMMAND="bash /tmp/roteiro8.sh" TERM="xterm-256color" TTY="/dev/pts/5" COLUMNS="120" LINES="30"]
+Tue Nov 24 21:43:58 -03 2026
+guilherme
+/mnt/c/Users/guilherme/OneDrive/Documentos/gsg4
+== sessao 8: testes sem os arquivos do professor no repositorio ==
+== parte A: o ultimo commit ainda tem os arquivos do professor (o enunciado manda nao enviar) ==
+2ef2103 Imprime a saida na tela e corrige o FIFO da TLB
+tests/dados/BACKING_STORE.bin
+tests/dados/addresses.txt
+tests/esperado/correct.txt
+== parte B: depois de tirar ==
+ D tests/dados/BACKING_STORE.bin
+ D tests/dados/addresses.txt
+ D tests/esperado/correct.txt
+arquivos do professor na arvore de trabalho: 0
+conteudo da pasta tests:
+casos	       gera_entradas.py  testa_entradas.sh  testa_modos.sh	testa_saida.sh
+gera_dados.py  modelo.py	 testa_modelo.sh    testa_professor.sh
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+GNU Make 4.3
+Python 3.12.3
+rm -f vm vm_asan *.o .config
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o vm.o vm.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o entrada.o entrada.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o memoria.o memoria.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o tlb.o tlb.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -c -o simulador.o simulador.c
+cc -Wall -Wextra -std=c11 -O2 -pthread -DNUMERO_FRAMES=128u -o vm vm.o entrada.o memoria.o tlb.o simulador.o
+cc -Wall -Wextra -std=c11 -pthread -DNUMERO_FRAMES=128u -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -o vm_asan vm.c entrada.c memoria.c tlb.c simulador.c
+bash tests/testa_entradas.sh ./vm
+binario: ./vm
+OK      args_zero
+OK      args_um
+OK      args_dois
+OK      args_quatro
+OK      args_cinco
+OK      args_mostra_uso
+OK      pagina_maiuscula
+OK      pagina_inicial_maiuscula
+OK      pagina_com_espaco
+OK      pagina_vazia
+OK      pagina_invalida
+OK      pagina_nao_ascii
+OK      pagina_invalida_mostra_uso
+OK      tlb_maiuscula
+OK      tlb_com_espaco
+OK      tlb_vazia
+OK      tlb_invalida
+OK      pagina_e_tlb_invalidas
+OK      argumentos_antes_do_arquivo
+OK      algoritmo_antes_do_arquivo
+OK      algoritmos_lru_fifo
+OK      algoritmos_fifo_lru
+OK      algoritmos_fifo_fifo
+OK      algoritmos_lru_lru
+OK      enderecos_ausente
+OK      enderecos_caminho_vazio
+OK      enderecos_diretorio
+OK      enderecos_sem_permissao
+OK      enderecos_1000_linhas
+OK      enderecos_1000_linhas_crlf
+OK      enderecos_1000_linhas_sem_lf_final
+OK      enderecos_limite_65535
+OK      enderecos_zeros_a_esquerda
+OK      enderecos_espacos_no_fim
+OK      enderecos_sem_lf_final
+OK      enderecos_cr_no_fim_do_arquivo
+OK      enderecos_crlf_com_espaco
+OK      enderecos_uma_linha
+OK      enderecos_3000_linhas
+OK      enderecos_linha_longa_zeros
+OK      enderecos_linha_longa_espacos
+OK      enderecos_arquivo_vazio
+OK      enderecos_so_lf
+OK      enderecos_so_crlf
+OK      enderecos_branca_no_meio
+OK      enderecos_branca_no_fim
+OK      enderecos_so_espacos
+OK      enderecos_espaco_no_inicio
+OK      enderecos_tab_no_inicio
+OK      enderecos_tab_no_fim
+OK      enderecos_espaco_no_meio
+OK      enderecos_nulo_no_meio
+OK      enderecos_nulo_no_inicio
+OK      enderecos_nulo_na_ultima_linha
+OK      enderecos_letra_no_fim
+OK      enderecos_so_letras
+OK      enderecos_sinal_mais
+OK      enderecos_sinal_menos
+OK      enderecos_menos_zero
+OK      enderecos_hexadecimal
+OK      enderecos_ponto_decimal
+OK      enderecos_virgula
+OK      enderecos_cr_no_meio
+OK      enderecos_cr_duplo
+OK      enderecos_cr_no_inicio
+OK      enderecos_65536
+OK      enderecos_int_max
+OK      enderecos_int_max_mais_um
+OK      enderecos_int_min
+OK      enderecos_uint_max
+OK      enderecos_vinte_digitos
+OK      enderecos_quarenta_digitos
+OK      enderecos_linha_longa_digitos
+OK      enderecos_linha_longa_letras
+OK      enderecos_erro_na_linha_1000
+OK      backing_ausente
+OK      backing_diretorio
+OK      backing_vazio
+OK      backing_65535_bytes
+OK      backing_65537_bytes
+OK      backing_link_quebrado
+OK      backing_link_valido
+OK      backing_sem_permissao
+OK      enderecos_antes_do_backing
+OK      enderecos_invalidos_antes_do_backing
+Casos OK: 85, FALHOU: 0, PULADO: 0
+bash tests/testa_entradas.sh ./vm_asan
+binario: ./vm_asan
+OK      args_zero
+OK      args_um
+OK      args_dois
+OK      args_quatro
+OK      args_cinco
+OK      args_mostra_uso
+OK      pagina_maiuscula
+OK      pagina_inicial_maiuscula
+OK      pagina_com_espaco
+OK      pagina_vazia
+OK      pagina_invalida
+OK      pagina_nao_ascii
+OK      pagina_invalida_mostra_uso
+OK      tlb_maiuscula
+OK      tlb_com_espaco
+OK      tlb_vazia
+OK      tlb_invalida
+OK      pagina_e_tlb_invalidas
+OK      argumentos_antes_do_arquivo
+OK      algoritmo_antes_do_arquivo
+OK      algoritmos_lru_fifo
+OK      algoritmos_fifo_lru
+OK      algoritmos_fifo_fifo
+OK      algoritmos_lru_lru
+OK      enderecos_ausente
+OK      enderecos_caminho_vazio
+OK      enderecos_diretorio
+OK      enderecos_sem_permissao
+OK      enderecos_1000_linhas
+OK      enderecos_1000_linhas_crlf
+OK      enderecos_1000_linhas_sem_lf_final
+OK      enderecos_limite_65535
+OK      enderecos_zeros_a_esquerda
+OK      enderecos_espacos_no_fim
+OK      enderecos_sem_lf_final
+OK      enderecos_cr_no_fim_do_arquivo
+OK      enderecos_crlf_com_espaco
+OK      enderecos_uma_linha
+OK      enderecos_3000_linhas
+OK      enderecos_linha_longa_zeros
+OK      enderecos_linha_longa_espacos
+OK      enderecos_arquivo_vazio
+OK      enderecos_so_lf
+OK      enderecos_so_crlf
+OK      enderecos_branca_no_meio
+OK      enderecos_branca_no_fim
+OK      enderecos_so_espacos
+OK      enderecos_espaco_no_inicio
+OK      enderecos_tab_no_inicio
+OK      enderecos_tab_no_fim
+OK      enderecos_espaco_no_meio
+OK      enderecos_nulo_no_meio
+OK      enderecos_nulo_no_inicio
+OK      enderecos_nulo_na_ultima_linha
+OK      enderecos_letra_no_fim
+OK      enderecos_so_letras
+OK      enderecos_sinal_mais
+OK      enderecos_sinal_menos
+OK      enderecos_menos_zero
+OK      enderecos_hexadecimal
+OK      enderecos_ponto_decimal
+OK      enderecos_virgula
+OK      enderecos_cr_no_meio
+OK      enderecos_cr_duplo
+OK      enderecos_cr_no_inicio
+OK      enderecos_65536
+OK      enderecos_int_max
+OK      enderecos_int_max_mais_um
+OK      enderecos_int_min
+OK      enderecos_uint_max
+OK      enderecos_vinte_digitos
+OK      enderecos_quarenta_digitos
+OK      enderecos_linha_longa_digitos
+OK      enderecos_linha_longa_letras
+OK      enderecos_erro_na_linha_1000
+OK      backing_ausente
+OK      backing_diretorio
+OK      backing_vazio
+OK      backing_65535_bytes
+OK      backing_65537_bytes
+OK      backing_link_quebrado
+OK      backing_link_valido
+OK      backing_sem_permissao
+OK      enderecos_antes_do_backing
+OK      enderecos_invalidos_antes_do_backing
+Casos OK: 85, FALHOU: 0, PULADO: 0
+bash tests/testa_saida.sh ./vm
+binario: ./vm
+OK      lru_fifo_na_saida_padrao_igual_ao_modelo
+OK      segunda_execucao_no_mesmo_diretorio
+OK      saida_termina_com_quebra_de_linha
+OK      saida_so_com_linhas_de_endereco_sem_estatisticas
+OK      nao_cria_nem_altera_correct_txt
+OK      funciona_em_diretorio_somente_leitura
+OK      saida_igual_atraves_de_pipe
+OK      saida_cheia_da_erro
+Casos OK: 8, FALHOU: 0, PULADO: 0
+bash tests/testa_saida.sh ./vm_asan
+binario: ./vm_asan
+OK      lru_fifo_na_saida_padrao_igual_ao_modelo
+OK      segunda_execucao_no_mesmo_diretorio
+OK      saida_termina_com_quebra_de_linha
+OK      saida_so_com_linhas_de_endereco_sem_estatisticas
+OK      nao_cria_nem_altera_correct_txt
+OK      funciona_em_diretorio_somente_leitura
+OK      saida_igual_atraves_de_pipe
+OK      saida_cheia_da_erro
+Casos OK: 8, FALHOU: 0, PULADO: 0
+bash tests/testa_modos.sh
+OK      compila_frames128_notlb0_nothread0
+OK      frames128_notlb0_nothread0_fifo_fifo
+OK      frames128_notlb0_nothread0_fifo_lru
+OK      frames128_notlb0_nothread0_lru_fifo
+OK      frames128_notlb0_nothread0_lru_lru
+OK      frames128_notlb0_nothread0_asan_lru_fifo
+OK      frames128_notlb0_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb0_nothread0_asan_fifo_lru
+OK      frames128_notlb0_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames128_notlb0_nothread1
+OK      frames128_notlb0_nothread1_fifo_fifo
+OK      frames128_notlb0_nothread1_fifo_lru
+OK      frames128_notlb0_nothread1_lru_fifo
+OK      frames128_notlb0_nothread1_lru_lru
+OK      frames128_notlb0_nothread1_asan_lru_fifo
+OK      frames128_notlb0_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb0_nothread1_asan_fifo_lru
+OK      frames128_notlb0_nothread1_asan_igual_ao_normal_fifo_lru
+OK      compila_frames128_notlb1_nothread0
+OK      frames128_notlb1_nothread0_fifo_fifo
+OK      frames128_notlb1_nothread0_fifo_lru
+OK      frames128_notlb1_nothread0_lru_fifo
+OK      frames128_notlb1_nothread0_lru_lru
+OK      frames128_notlb1_nothread0_asan_lru_fifo
+OK      frames128_notlb1_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb1_nothread0_asan_fifo_lru
+OK      frames128_notlb1_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames128_notlb1_nothread1
+OK      frames128_notlb1_nothread1_fifo_fifo
+OK      frames128_notlb1_nothread1_fifo_lru
+OK      frames128_notlb1_nothread1_lru_fifo
+OK      frames128_notlb1_nothread1_lru_lru
+OK      frames128_notlb1_nothread1_asan_lru_fifo
+OK      frames128_notlb1_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames128_notlb1_nothread1_asan_fifo_lru
+OK      frames128_notlb1_nothread1_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb0_nothread0
+OK      frames256_notlb0_nothread0_fifo_fifo
+OK      frames256_notlb0_nothread0_fifo_lru
+OK      frames256_notlb0_nothread0_lru_fifo
+OK      frames256_notlb0_nothread0_lru_lru
+OK      frames256_notlb0_nothread0_asan_lru_fifo
+OK      frames256_notlb0_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb0_nothread0_asan_fifo_lru
+OK      frames256_notlb0_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb0_nothread1
+OK      frames256_notlb0_nothread1_fifo_fifo
+OK      frames256_notlb0_nothread1_fifo_lru
+OK      frames256_notlb0_nothread1_lru_fifo
+OK      frames256_notlb0_nothread1_lru_lru
+OK      frames256_notlb0_nothread1_asan_lru_fifo
+OK      frames256_notlb0_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb0_nothread1_asan_fifo_lru
+OK      frames256_notlb0_nothread1_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb1_nothread0
+OK      frames256_notlb1_nothread0_fifo_fifo
+OK      frames256_notlb1_nothread0_fifo_lru
+OK      frames256_notlb1_nothread0_lru_fifo
+OK      frames256_notlb1_nothread0_lru_lru
+OK      frames256_notlb1_nothread0_asan_lru_fifo
+OK      frames256_notlb1_nothread0_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb1_nothread0_asan_fifo_lru
+OK      frames256_notlb1_nothread0_asan_igual_ao_normal_fifo_lru
+OK      compila_frames256_notlb1_nothread1
+OK      frames256_notlb1_nothread1_fifo_fifo
+OK      frames256_notlb1_nothread1_fifo_lru
+OK      frames256_notlb1_nothread1_lru_fifo
+OK      frames256_notlb1_nothread1_lru_lru
+OK      frames256_notlb1_nothread1_asan_lru_fifo
+OK      frames256_notlb1_nothread1_asan_igual_ao_normal_lru_fifo
+OK      frames256_notlb1_nothread1_asan_fifo_lru
+OK      frames256_notlb1_nothread1_asan_igual_ao_normal_fifo_lru
+OK      com_thread_igual_a_sem_thread_frames128_fifo_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_fifo_fifo
+OK      com_thread_igual_a_sem_thread_frames128_fifo_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_fifo_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames128_fifo
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames128_fifo
+OK      com_thread_igual_a_sem_thread_frames128_lru_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_lru_fifo
+OK      com_thread_igual_a_sem_thread_frames128_lru_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames128_lru_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames128_lru
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames128_lru
+OK      com_thread_igual_a_sem_thread_frames256_fifo_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_fifo_fifo
+OK      com_thread_igual_a_sem_thread_frames256_fifo_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_fifo_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames256_fifo
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames256_fifo
+OK      com_thread_igual_a_sem_thread_frames256_lru_fifo
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_lru_fifo
+OK      com_thread_igual_a_sem_thread_frames256_lru_lru
+OK      enderecos_fisicos_iguais_com_e_sem_tlb_frames256_lru_lru
+OK      enderecos_fisicos_nao_dependem_do_algoritmo_da_tlb_frames256_lru
+OK      sem_tlb_ignora_o_argumento_da_tlb_frames256_lru
+OK      100000_enderecos_frames128_notlb1_nothread1_vm
+OK      100000_enderecos_frames128_notlb1_nothread1_vm_asan
+OK      100000_enderecos_frames128_notlb0_nothread1_vm
+OK      100000_enderecos_frames128_notlb0_nothread1_vm_asan
+OK      make_rejeita_FRAMES=64
+OK      make_rejeita_FRAMES=
+OK      make_rejeita_FRAMES=abc
+OK      make_rejeita_NOTLB=0
+OK      make_rejeita_NOTLB=2
+OK      make_rejeita_NOTHREAD=0
+OK      make_rejeita_NOTHREAD=x
+OK      make_recompila_ao_trocar_FRAMES
+OK      make_recompila_ao_ligar_NOTLB
+OK      make_recompila_ao_desligar_NOTLB
+Casos OK: 110, FALHOU: 0
+bash tests/testa_modelo.sh
+OK      compila_sem_thread_128
+OK      compila_sem_thread_256
+OK      compila_com_thread_128
+OK      compila_com_thread_256
+OK      compila_sem_tlb_128
+OK      compila_sem_tlb_256
+OK      modelo_python_igual_ao_calculo_a_mao_tlb.fifo
+OK      modelo_python_igual_ao_calculo_a_mao_tlb.lru
+OK      modelo_python_igual_ao_calculo_a_mao_pagina.fifo
+OK      modelo_python_igual_ao_calculo_a_mao_pagina.lru
+OK      modelo_python_igual_ao_calculo_a_mao_invalida.fifo
+OK      modelo_python_igual_ao_calculo_a_mao_invalida.lru
+OK      a_mao_tlb_fifo_pagina_fifo
+OK      a_mao_tlb_fifo_pagina_lru
+OK      a_mao_tlb_lru_pagina_fifo
+OK      a_mao_tlb_lru_pagina_lru
+OK      a_mao_pagina_fifo_despeja_a_mais_antiga_e_invalida_a_tlb
+OK      a_mao_pagina_lru_despeja_a_menos_usada
+OK      a_mao_posicao_livre_da_tlb_fifo_depois_de_invalidar
+OK      a_mao_posicao_livre_da_tlb_lru_depois_de_invalidar
+OK      modelo_frames128_com_tlb_aleatorio_1000_a_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_1000_a_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_1000_a_pagina_fifo
+OK      modelo_frames128_com_tlb_aleatorio_1000_a_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_1000_a_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_1000_a_pagina_lru
+OK      modelo_frames128_com_tlb_aleatorio_1000_b_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_1000_b_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_1000_b_pagina_fifo
+OK      modelo_frames128_com_tlb_aleatorio_1000_b_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_1000_b_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_1000_b_pagina_lru
+OK      modelo_frames128_com_tlb_aleatorio_20000_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_20000_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_20000_pagina_fifo
+OK      modelo_frames128_com_tlb_aleatorio_20000_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_20000_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_20000_pagina_lru
+OK      modelo_frames128_com_tlb_aleatorio_50_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_50_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_50_pagina_fifo
+OK      modelo_frames128_com_tlb_aleatorio_50_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_aleatorio_50_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_aleatorio_50_pagina_lru
+OK      modelo_frames128_com_tlb_ciclico_129_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_ciclico_129_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_ciclico_129_pagina_fifo
+OK      modelo_frames128_com_tlb_ciclico_129_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_ciclico_129_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_ciclico_129_pagina_lru
+OK      modelo_frames128_com_tlb_enderecos_1000_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_enderecos_1000_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_enderecos_1000_pagina_fifo
+OK      modelo_frames128_com_tlb_enderecos_1000_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_enderecos_1000_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_enderecos_1000_pagina_lru
+OK      modelo_frames128_com_tlb_localidade_100000_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_localidade_100000_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_localidade_100000_pagina_fifo
+OK      modelo_frames128_com_tlb_localidade_100000_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_localidade_100000_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_localidade_100000_pagina_lru
+OK      modelo_frames128_com_tlb_localidade_140_paginas_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_localidade_140_paginas_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_localidade_140_paginas_pagina_fifo
+OK      modelo_frames128_com_tlb_localidade_140_paginas_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_localidade_140_paginas_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_localidade_140_paginas_pagina_lru
+OK      modelo_frames128_com_tlb_localidade_20_paginas_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_localidade_20_paginas_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_localidade_20_paginas_pagina_fifo
+OK      modelo_frames128_com_tlb_localidade_20_paginas_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_localidade_20_paginas_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_localidade_20_paginas_pagina_lru
+OK      modelo_frames128_com_tlb_repetido_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_repetido_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_repetido_pagina_fifo
+OK      modelo_frames128_com_tlb_repetido_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_repetido_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_repetido_pagina_lru
+OK      modelo_frames128_com_tlb_sequencial_128_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_sequencial_128_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_sequencial_128_pagina_fifo
+OK      modelo_frames128_com_tlb_sequencial_128_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_sequencial_128_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_sequencial_128_pagina_lru
+OK      modelo_frames128_com_tlb_sequencial_129_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_sequencial_129_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_sequencial_129_pagina_fifo
+OK      modelo_frames128_com_tlb_sequencial_129_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_sequencial_129_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_sequencial_129_pagina_lru
+OK      modelo_frames128_com_tlb_todas_256_ida_e_volta_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_todas_256_ida_e_volta_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_todas_256_ida_e_volta_pagina_fifo
+OK      modelo_frames128_com_tlb_todas_256_ida_e_volta_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_todas_256_ida_e_volta_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_todas_256_ida_e_volta_pagina_lru
+OK      modelo_frames128_com_tlb_um_maximo_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_um_maximo_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_um_maximo_pagina_fifo
+OK      modelo_frames128_com_tlb_um_maximo_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_um_maximo_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_um_maximo_pagina_lru
+OK      modelo_frames128_com_tlb_um_zero_pagina_fifo_tlb_fifo
+OK      modelo_frames128_com_tlb_um_zero_pagina_fifo_tlb_lru
+OK      modelo_frames128_sem_tlb_um_zero_pagina_fifo
+OK      modelo_frames128_com_tlb_um_zero_pagina_lru_tlb_fifo
+OK      modelo_frames128_com_tlb_um_zero_pagina_lru_tlb_lru
+OK      modelo_frames128_sem_tlb_um_zero_pagina_lru
+OK      modelo_frames256_com_tlb_aleatorio_1000_a_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_1000_a_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_1000_a_pagina_fifo
+OK      modelo_frames256_com_tlb_aleatorio_1000_a_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_1000_a_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_1000_a_pagina_lru
+OK      modelo_frames256_com_tlb_aleatorio_1000_b_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_1000_b_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_1000_b_pagina_fifo
+OK      modelo_frames256_com_tlb_aleatorio_1000_b_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_1000_b_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_1000_b_pagina_lru
+OK      modelo_frames256_com_tlb_aleatorio_20000_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_20000_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_20000_pagina_fifo
+OK      modelo_frames256_com_tlb_aleatorio_20000_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_20000_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_20000_pagina_lru
+OK      modelo_frames256_com_tlb_aleatorio_50_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_50_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_50_pagina_fifo
+OK      modelo_frames256_com_tlb_aleatorio_50_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_aleatorio_50_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_aleatorio_50_pagina_lru
+OK      modelo_frames256_com_tlb_ciclico_129_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_ciclico_129_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_ciclico_129_pagina_fifo
+OK      modelo_frames256_com_tlb_ciclico_129_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_ciclico_129_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_ciclico_129_pagina_lru
+OK      modelo_frames256_com_tlb_enderecos_1000_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_enderecos_1000_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_enderecos_1000_pagina_fifo
+OK      modelo_frames256_com_tlb_enderecos_1000_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_enderecos_1000_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_enderecos_1000_pagina_lru
+OK      modelo_frames256_com_tlb_localidade_100000_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_localidade_100000_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_localidade_100000_pagina_fifo
+OK      modelo_frames256_com_tlb_localidade_100000_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_localidade_100000_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_localidade_100000_pagina_lru
+OK      modelo_frames256_com_tlb_localidade_140_paginas_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_localidade_140_paginas_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_localidade_140_paginas_pagina_fifo
+OK      modelo_frames256_com_tlb_localidade_140_paginas_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_localidade_140_paginas_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_localidade_140_paginas_pagina_lru
+OK      modelo_frames256_com_tlb_localidade_20_paginas_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_localidade_20_paginas_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_localidade_20_paginas_pagina_fifo
+OK      modelo_frames256_com_tlb_localidade_20_paginas_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_localidade_20_paginas_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_localidade_20_paginas_pagina_lru
+OK      modelo_frames256_com_tlb_repetido_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_repetido_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_repetido_pagina_fifo
+OK      modelo_frames256_com_tlb_repetido_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_repetido_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_repetido_pagina_lru
+OK      modelo_frames256_com_tlb_sequencial_128_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_sequencial_128_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_sequencial_128_pagina_fifo
+OK      modelo_frames256_com_tlb_sequencial_128_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_sequencial_128_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_sequencial_128_pagina_lru
+OK      modelo_frames256_com_tlb_sequencial_129_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_sequencial_129_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_sequencial_129_pagina_fifo
+OK      modelo_frames256_com_tlb_sequencial_129_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_sequencial_129_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_sequencial_129_pagina_lru
+OK      modelo_frames256_com_tlb_todas_256_ida_e_volta_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_todas_256_ida_e_volta_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_todas_256_ida_e_volta_pagina_fifo
+OK      modelo_frames256_com_tlb_todas_256_ida_e_volta_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_todas_256_ida_e_volta_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_todas_256_ida_e_volta_pagina_lru
+OK      modelo_frames256_com_tlb_um_maximo_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_um_maximo_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_um_maximo_pagina_fifo
+OK      modelo_frames256_com_tlb_um_maximo_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_um_maximo_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_um_maximo_pagina_lru
+OK      modelo_frames256_com_tlb_um_zero_pagina_fifo_tlb_fifo
+OK      modelo_frames256_com_tlb_um_zero_pagina_fifo_tlb_lru
+OK      modelo_frames256_sem_tlb_um_zero_pagina_fifo
+OK      modelo_frames256_com_tlb_um_zero_pagina_lru_tlb_fifo
+OK      modelo_frames256_com_tlb_um_zero_pagina_lru_tlb_lru
+OK      modelo_frames256_sem_tlb_um_zero_pagina_lru
+Casos OK: 200, FALHOU: 0
+bash tests/testa_professor.sh ./vm
+binario: ./vm
+OK      professor_lru_fifo_cmp_byte_a_byte
+Casos OK: 1, FALHOU: 0, PULADO: 0
+bash tests/testa_professor.sh ./vm_asan
+binario: ./vm_asan
+OK      professor_lru_fifo_cmp_byte_a_byte
+Casos OK: 1, FALHOU: 0, PULADO: 0
+codigo de saida do make test: 0
+linhas FALHOU na saida do make test: 0
+resumos de casos:
+binario: ./vm
+Casos OK: 85, FALHOU: 0, PULADO: 0
+binario: ./vm_asan
+Casos OK: 85, FALHOU: 0, PULADO: 0
+binario: ./vm
+Casos OK: 8, FALHOU: 0, PULADO: 0
+binario: ./vm_asan
+Casos OK: 8, FALHOU: 0, PULADO: 0
+Casos OK: 110, FALHOU: 0
+Casos OK: 200, FALHOU: 0
+binario: ./vm
+Casos OK: 1, FALHOU: 0, PULADO: 0
+binario: ./vm_asan
+Casos OK: 1, FALHOU: 0, PULADO: 0
+casos do professor (PROFESSOR apontando para a pasta Downloads, fora do repositorio):
+OK      professor_lru_fifo_cmp_byte_a_byte
+OK      professor_lru_fifo_cmp_byte_a_byte
+== sem PROFESSOR os casos do professor sao pulados ==
+binario: ./vm
+PULADO  professor_lru_fifo_cmp_byte_a_byte (defina PROFESSOR=pasta com os arquivos do professor)
+Casos OK: 0, FALHOU: 0, PULADO: 1
+ M .gitattributes
+ M Makefile
+ M README.md
+ M evidencias.log
+ M tests/casos/invalida.fifo.esperado
+ M tests/casos/invalida.lru.esperado
+ M tests/casos/pagina.fifo.esperado
+ M tests/casos/pagina.lru.esperado
+ M tests/casos/tlb.fifo.esperado
+ M tests/casos/tlb.lru.esperado
+ D tests/dados/BACKING_STORE.bin
+ D tests/dados/addresses.txt
+ D tests/esperado/correct.txt
+ M tests/testa_entradas.sh
+ M tests/testa_modelo.sh
+ M tests/testa_modos.sh
+ M tests/testa_saida.sh
+?? tests/gera_dados.py
+?? tests/testa_professor.sh
+
+Script done on 2026-11-24 21:46:41-03:00 [COMMAND_EXIT_CODE="0"]

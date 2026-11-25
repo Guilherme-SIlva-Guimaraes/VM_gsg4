@@ -1,10 +1,9 @@
 RAIZ=$(cd "$(dirname "$0")/.." && pwd)
-DADOS="$RAIZ/tests/dados"
 CASOS="$RAIZ/tests/casos"
-ESPERADO="$RAIZ/tests/esperado/correct.txt"
 TMP=$(mktemp -d /tmp/vmmodelo.XXXXXX)
+DADOS="$TMP/dados"
 FONTES="Makefile config.h entrada.c entrada.h memoria.c memoria.h simulador.c simulador.h tlb.c tlb.h vm.c"
-PEQUENAS="um_zero um_maximo repetido sequencial_129 aleatorio_50 todas_256_ida_e_volta"
+PEQUENAS="um_zero um_maximo repetido sequencial_129 aleatorio_50 todas_256_ida_e_volta enderecos_1000"
 OK=0
 FALHOU=0
 trap 'rm -rf "$TMP"' EXIT
@@ -93,15 +92,9 @@ constroi com_thread_256 FRAMES=256
 constroi sem_tlb_128 FRAMES=128 NOTLB=1
 constroi sem_tlb_256 FRAMES=256 NOTLB=1
 
+python3 -I "$RAIZ/tests/gera_dados.py" "$DADOS"
 python3 -I "$RAIZ/tests/gera_entradas.py" "$TMP/in"
-
-head -n 1000 "$ESPERADO" > "$TMP/professor1000.txt"
-modelo "$DADOS/addresses.txt" lru fifo 128 tlb "$TMP/m.txt"
-if cmp -s "$TMP/m.txt" "$TMP/professor1000.txt"; then
-    passou modelo_python_igual_as_1000_linhas_do_professor
-else
-    falhou modelo_python_igual_as_1000_linhas_do_professor "$(cmp "$TMP/m.txt" "$TMP/professor1000.txt" 2>&1 | head -n 1)"
-fi
+cp "$DADOS/addresses.txt" "$TMP/in/enderecos_1000.txt"
 
 for c in "tlb fifo tlb.fifo" "tlb lru tlb.lru" "pagina fifo pagina.fifo" "pagina lru pagina.lru" "invalida fifo invalida.fifo" "invalida lru invalida.lru"; do
     set -- $c

@@ -5,9 +5,8 @@ fi
 
 VM=$(readlink -f "$1")
 RAIZ=$(cd "$(dirname "$0")/.." && pwd)
-DADOS="$RAIZ/tests/dados"
-ESPERADO="$RAIZ/tests/esperado/correct.txt"
 TMP=$(mktemp -d /tmp/vmsaida.XXXXXX)
+DADOS="$TMP/dados"
 W="$TMP/w"
 OK=0
 FALHOU=0
@@ -18,7 +17,8 @@ passou() { OK=$((OK + 1)); echo "OK      $1"; }
 falhou() { FALHOU=$((FALHOU + 1)); echo "FALHOU  $1 ($2)"; }
 pulado() { PULADO=$((PULADO + 1)); echo "PULADO  $1 ($2)"; }
 
-head -n 1000 "$ESPERADO" > "$TMP/esperado1000.txt"
+python3 -I "$RAIZ/tests/gera_dados.py" "$DADOS"
+python3 -I "$RAIZ/tests/modelo.py" "$DADOS/addresses.txt" "$DADOS/BACKING_STORE.bin" lru fifo 128 tlb > "$TMP/esperado.txt"
 
 novo_w() {
     rm -rf "$W"
@@ -40,8 +40,8 @@ confere_sucesso() {
         falhou "$nome" "codigo $COD, esperado 0: $(resumo_erro)"
     elif [ -s "$TMP/erro" ]; then
         falhou "$nome" "stderr nao vazio: $(resumo_erro)"
-    elif ! cmp -s "$TMP/saida" "$TMP/esperado1000.txt"; then
-        falhou "$nome" "saida difere das 1000 linhas do professor: $(cmp "$TMP/saida" "$TMP/esperado1000.txt" 2>&1 | head -n 1)"
+    elif ! cmp -s "$TMP/saida" "$TMP/esperado.txt"; then
+        falhou "$nome" "saida difere do modelo: $(cmp "$TMP/saida" "$TMP/esperado.txt" 2>&1 | head -n 1)"
     elif [ "$(lista_w)" != "BACKING_STORE.bin addresses.txt " ]; then
         falhou "$nome" "arquivos no diretorio: $(lista_w)"
     else
@@ -53,10 +53,10 @@ echo "binario: $1"
 
 novo_w
 rodar addresses.txt lru fifo
-confere_sucesso professor_lru_fifo_na_saida_padrao_cmp_byte_a_byte
+confere_sucesso lru_fifo_na_saida_padrao_igual_ao_modelo
 
 rodar addresses.txt lru fifo
-confere_sucesso professor_segunda_execucao_no_mesmo_diretorio
+confere_sucesso segunda_execucao_no_mesmo_diretorio
 
 if [ "$(tail -c 1 "$TMP/saida" | od -An -c | tr -d ' ')" = '\n' ]; then
     passou saida_termina_com_quebra_de_linha
@@ -88,7 +88,7 @@ confere_sucesso funciona_em_diretorio_somente_leitura
 novo_w
 ( cd "$W" && "$VM" addresses.txt lru fifo | cat > "$TMP/saida_cat"; exit "${PIPESTATUS[0]}" ) 2> "$TMP/erro"
 COD=$?
-if [ "$COD" -eq 0 ] && cmp -s "$TMP/saida_cat" "$TMP/esperado1000.txt"; then
+if [ "$COD" -eq 0 ] && cmp -s "$TMP/saida_cat" "$TMP/esperado.txt"; then
     passou saida_igual_atraves_de_pipe
 else
     falhou saida_igual_atraves_de_pipe "codigo $COD"

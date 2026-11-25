@@ -5,8 +5,8 @@ fi
 
 VM=$(readlink -f "$1")
 RAIZ=$(cd "$(dirname "$0")/.." && pwd)
-DADOS="$RAIZ/tests/dados"
 TMP=$(mktemp -d /tmp/vmentradas.XXXXXX)
+DADOS="$TMP/dados"
 IN="$TMP/in"
 W="$TMP/w"
 OK=0
@@ -14,6 +14,7 @@ FALHOU=0
 PULADO=0
 mkdir -p "$IN"
 trap 'rm -rf "$TMP"' EXIT
+python3 -I "$RAIZ/tests/gera_dados.py" "$DADOS"
 
 passou() { OK=$((OK + 1)); echo "OK      $1"; }
 falhou() { FALHOU=$((FALHOU + 1)); echo "FALHOU  $1 ($2)"; }
@@ -171,8 +172,8 @@ mkdir "$IN/diretorio"
 repete a 1048576 > "$IN/longa_letras_sem_lf"
 awk 'BEGIN { for (i = 0; i < 3000; i++) print i % 65536 }' > "$IN/muitos_ok"
 { head -n 999 "$DADOS/addresses.txt"; printf 'x\n'; } > "$IN/erro_na_1000"
-sed 's/$/\r/' "$DADOS/addresses.txt" > "$IN/oficial_crlf"
-head -c -1 "$DADOS/addresses.txt" > "$IN/oficial_sem_lf"
+sed 's/$/\r/' "$DADOS/addresses.txt" > "$IN/mil_crlf"
+head -c -1 "$DADOS/addresses.txt" > "$IN/mil_sem_lf"
 
 USO='uso: ./vm arquivo_enderecos fifo|lru fifo|lru'
 
@@ -211,9 +212,9 @@ else
     caso_erro enderecos_sem_permissao "arquivo de enderecos: sem permissao de leitura" "$(arq sem_permissao)" lru fifo
 fi
 
-caso_ok enderecos_oficial "$DADOS/addresses.txt" lru fifo
-caso_ok enderecos_oficial_crlf "$(arq oficial_crlf)" lru fifo
-caso_ok enderecos_oficial_sem_lf_final "$(arq oficial_sem_lf)" lru fifo
+caso_ok enderecos_1000_linhas "$DADOS/addresses.txt" lru fifo
+caso_ok enderecos_1000_linhas_crlf "$(arq mil_crlf)" lru fifo
+caso_ok enderecos_1000_linhas_sem_lf_final "$(arq mil_sem_lf)" lru fifo
 caso_ok enderecos_limite_65535 "$(arq limite_ok)" lru fifo
 caso_ok enderecos_zeros_a_esquerda "$(arq zeros_ok)" lru fifo
 caso_ok enderecos_espacos_no_fim "$(arq espacos_fim_ok)" lru fifo

@@ -1,7 +1,6 @@
 RAIZ=$(cd "$(dirname "$0")/.." && pwd)
-DADOS="$RAIZ/tests/dados"
-ESPERADO="$RAIZ/tests/esperado/correct.txt"
 TMP=$(mktemp -d /tmp/vmmodos.XXXXXX)
+DADOS="$TMP/dados"
 SAIDAS="$TMP/saidas"
 FONTES="Makefile config.h entrada.c entrada.h memoria.c memoria.h simulador.c simulador.h tlb.c tlb.h vm.c"
 OK=0
@@ -12,8 +11,7 @@ mkdir -p "$SAIDAS"
 passou() { OK=$((OK + 1)); echo "OK      $1"; }
 falhou() { FALHOU=$((FALHOU + 1)); echo "FALHOU  $1 ($2)"; }
 
-head -n 1000 "$ESPERADO" > "$TMP/esperado1000.txt"
-awk '/^Virtual address:/ { print $NF }' "$TMP/esperado1000.txt" > "$TMP/valores.col"
+python3 -I "$RAIZ/tests/gera_dados.py" "$DADOS"
 DISTINTAS=$(awk '{ p[int($1 / 256)] = 1 } END { n = 0; for (k in p) n++; print n }' "$DADOS/addresses.txt")
 awk 'BEGIN { for (i = 0; i < 100000; i++) print i % 65536 }' > "$TMP/grande.txt"
 
@@ -69,10 +67,6 @@ confere() {
         falhou "$nome" "linha que nao e de endereco na saida"
         return
     fi
-    if ! awk '/^Virtual address:/ { print $NF }' "$arq" | cmp -s - "$TMP/valores.col"; then
-        falhou "$nome" "coluna Value difere da do professor"
-        return
-    fi
     res=$(awk -v frames="$frames" -v com_tlb="$com_tlb" '
 FNR == NR { ender[FNR] = $1; total = FNR; next }
 /^Virtual address:/ {
@@ -81,6 +75,9 @@ FNR == NR { ender[FNR] = $1; total = FNR; next }
     pa = $(NF - 2)
     if (va != ender[k]) erro = erro " va" k
     if (pa % 256 != va % 256) erro = erro " deslocamento" k
+    esperado = (int(va / 256) * 5 + (va % 256) * 3 + 1) % 256
+    if (esperado > 127) esperado -= 256
+    if ($NF != esperado) erro = erro " valor" k
     fr = int(pa / 256)
     if (fr >= frames) erro = erro " frame" k
     pagina = int(va / 256)
@@ -181,16 +178,6 @@ for frames in 128 256; do
             passou "sem_tlb_ignora_o_argumento_da_tlb_frames${frames}_${pag}"
         else
             falhou "sem_tlb_ignora_o_argumento_da_tlb_frames${frames}_${pag}" "saidas diferem"
-        fi
-    done
-done
-
-for v in frames128_notlb0_nothread0 frames128_notlb0_nothread1; do
-    for prefixo in "" asan_; do
-        if cmp -s "$SAIDAS/${v}_${prefixo}lru_fifo.txt" "$TMP/esperado1000.txt"; then
-            passou "professor_cmp_byte_a_byte_${v}_${prefixo}lru_fifo"
-        else
-            falhou "professor_cmp_byte_a_byte_${v}_${prefixo}lru_fifo" "saida difere das 1000 linhas do professor"
         fi
     done
 done

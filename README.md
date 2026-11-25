@@ -18,7 +18,7 @@ Outros fluxos (o executavel continua sendo o vm):
     make NOTLB=1
     make NOTHREAD=1
 
-Testes:
+Testes (para conferir tambem com os arquivos do professor, use PROFESSOR=pasta make test):
 
     make test
 
